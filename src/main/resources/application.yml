@@ -24,7 +24,7 @@ spring:
     init:
       mode: always
 
-server-uri: http://localhost:8080
+server-uri: http://localhost:8081
 
 eureka:
   client:
