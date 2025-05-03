@@ -22,6 +22,7 @@ public class PostService {
 	@Transactional
 	public PostCreateResponse createPost(PostCreateRequest postCreateRequest) {
 		UUID userId = userServiceClient.getUserProfile("").getResult().id();
+		String nickname = userServiceClient.getUserProfile("").getResult().nickname();
 
 		Post post = Post.builder()
 			.title(postCreateRequest.title())
@@ -32,6 +33,6 @@ public class PostService {
 
 		postRepository.save(post);
 
-		return PostCreateResponse.from(post);
+		return PostCreateResponse.of(post, nickname);
 	}
 }

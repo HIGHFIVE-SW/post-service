@@ -13,15 +13,17 @@ public record PostCreateResponse(
 	UUID id,
 	String title,
 	UUID userId,
+	String nickname,
 	String content,
 	Set<Keyword> keywords,
 	Boolean deleted
 ) {
-	public static PostCreateResponse from(Post post) {
+	public static PostCreateResponse of(Post post, String nickname) {
 		return PostCreateResponse.builder()
 			.id(post.getId())
 			.title(post.getTitle())
 			.userId(post.getUserId())
+			.nickname(nickname)
 			.content(post.getContent())
 			.keywords(post.getKeywords())
 			.deleted(post.getDeleted())
