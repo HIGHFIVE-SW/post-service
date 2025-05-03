@@ -50,5 +50,6 @@ public class Post extends BaseTimeEntity {
 	private Set<Keyword> keywords;
 
 	@Column(name="deleted")
+	@Builder.Default
 	private Boolean deleted = false;
 }

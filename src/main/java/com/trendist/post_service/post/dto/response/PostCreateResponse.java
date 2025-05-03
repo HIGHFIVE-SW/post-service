@@ -12,6 +12,7 @@ import lombok.Builder;
 public record PostCreateResponse(
 	UUID id,
 	String title,
+	UUID userId,
 	String content,
 	Set<Keyword> keywords,
 	Boolean deleted
@@ -20,6 +21,7 @@ public record PostCreateResponse(
 		return PostCreateResponse.builder()
 			.id(post.getId())
 			.title(post.getTitle())
+			.userId(post.getUserId())
 			.content(post.getContent())
 			.keywords(post.getKeywords())
 			.deleted(post.getDeleted())
