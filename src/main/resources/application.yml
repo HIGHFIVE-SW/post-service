@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: post-service
@@ -22,3 +25,19 @@ spring:
       mode: always
 
 server-uri: http://localhost:8080
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
