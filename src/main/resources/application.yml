@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: post-service
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
   datasource:
     url: ${DB_URL}
     username: root
@@ -19,7 +23,6 @@ spring:
         format_sql: true
         use_sql_comments: true
     defer-datasource-initialization: true
-
   sql:
     init:
       mode: always
@@ -41,3 +44,10 @@ feign:
       default:
         connectTimeout: 5000
         readTimeout: 5000
+
+aws:
+  s3:
+    accessKey: ${S3_ACCESS_KEY}
+    secretKey: ${S3_SECRET_KEY}
+    bucketName: ${S3_BUCKET}
+    region: ap-northeast-2
