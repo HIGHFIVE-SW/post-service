@@ -28,6 +28,7 @@ public class PostService {
 			.title(postCreateRequest.title())
 			.content(postCreateRequest.content())
 			.keywords(postCreateRequest.keywords())
+			.imageUrl(postCreateRequest.imageUrl())
 			.userId(userId)
 			.build();
 

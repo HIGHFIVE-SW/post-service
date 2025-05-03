@@ -10,6 +10,7 @@ import lombok.Builder;
 public record PostCreateRequest(
 	String title,
 	String content,
-	Set<Keyword> keywords
+	Set<Keyword> keywords,
+	String imageUrl
 ) {
 }

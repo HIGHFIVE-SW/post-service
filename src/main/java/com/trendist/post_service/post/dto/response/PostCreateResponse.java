@@ -16,6 +16,7 @@ public record PostCreateResponse(
 	String nickname,
 	String content,
 	Set<Keyword> keywords,
+	String imageUrl,
 	Boolean deleted
 ) {
 	public static PostCreateResponse of(Post post, String nickname) {
@@ -26,6 +27,7 @@ public record PostCreateResponse(
 			.nickname(nickname)
 			.content(post.getContent())
 			.keywords(post.getKeywords())
+			.imageUrl(post.getImageUrl())
 			.deleted(post.getDeleted())
 			.build();
 	}
