@@ -18,8 +18,8 @@ import lombok.RequiredArgsConstructor;
 public class PresignedUrlController {
 	private final PresignedUrlService presignedUrlService;
 
-	@PostMapping("/presignedurl")
+	@PostMapping("/presignedurls")
 	public ApiResponse<PresignedUrlResponse> getPresignedUrl(@RequestBody PresignedUrlRequest presignedUrlRequest) {
-		return ApiResponse.onSuccess(presignedUrlService.getPreSignedUrl(presignedUrlRequest.imageName()));
+		return ApiResponse.onSuccess(presignedUrlService.getPreSignedUrl(presignedUrlRequest.imageNames()));
 	}
 }

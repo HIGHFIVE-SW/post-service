@@ -1,5 +1,6 @@
 package com.trendist.post_service.post.dto.response;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ public record PostCreateResponse(
 	String nickname,
 	String content,
 	Set<Keyword> keywords,
-	String imageUrl,
+	List<String> imageUrls,
 	Boolean deleted
 ) {
 	public static PostCreateResponse of(Post post, String nickname) {
@@ -27,7 +28,7 @@ public record PostCreateResponse(
 			.nickname(nickname)
 			.content(post.getContent())
 			.keywords(post.getKeywords())
-			.imageUrl(post.getImageUrl())
+			.imageUrls(post.getImageUrls())
 			.deleted(post.getDeleted())
 			.build();
 	}

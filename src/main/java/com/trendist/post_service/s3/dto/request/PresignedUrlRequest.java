@@ -1,6 +1,8 @@
 package com.trendist.post_service.s3.dto.request;
 
+import java.util.List;
+
 public record PresignedUrlRequest(
-	String imageName
+	List<String> imageNames
 ) {
 }

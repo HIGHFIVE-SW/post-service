@@ -1,5 +1,6 @@
 package com.trendist.post_service.post.domain;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,8 +50,10 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "keyword")
 	private Set<Keyword> keywords;
 
-	@Column(name = "image_url")
-	private String imageUrl;
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "post_image_urls", joinColumns = @JoinColumn(name = "post_id"))
+	@Column(name = "image_urls")
+	private List<String> imageUrls;
 
 	@Column(name = "deleted")
 	@Builder.Default
