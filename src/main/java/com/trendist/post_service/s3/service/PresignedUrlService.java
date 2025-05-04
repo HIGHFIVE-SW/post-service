@@ -26,11 +26,11 @@ public class PresignedUrlService {
 	@Value("${aws.s3.bucketName}")
 	private String bucketName;
 
-	private static final int MAX_FILES_COUNT=5;
+	private static final int MAX_FILES_COUNT = 5;
 
 	@Transactional
 	public PresignedUrlResponse getPreSignedUrl(List<String> originalFilenames) {
-		if(originalFilenames.size()>MAX_FILES_COUNT){
+		if (originalFilenames.size() > MAX_FILES_COUNT) {
 			throw new ApiException(ErrorStatus._S3_OVER_MAX_FILES);
 		}
 
