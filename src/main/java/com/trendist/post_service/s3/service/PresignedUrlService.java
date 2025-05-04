@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.trendist.post_service.global.exception.ApiException;
+import com.trendist.post_service.global.response.status.ErrorStatus;
 import com.trendist.post_service.s3.dto.response.PresignedUrlResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +26,14 @@ public class PresignedUrlService {
 	@Value("${aws.s3.bucketName}")
 	private String bucketName;
 
+	private static final int MAX_FILES_COUNT=5;
+
 	@Transactional
 	public PresignedUrlResponse getPreSignedUrl(List<String> originalFilenames) {
+		if(originalFilenames.size()>MAX_FILES_COUNT){
+			throw new ApiException(ErrorStatus._S3_OVER_MAX_FILES);
+		}
+
 		List<String> urls = originalFilenames.stream()
 			.map(this::createPath)
 			.map(path -> {
