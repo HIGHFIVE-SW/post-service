@@ -26,6 +26,9 @@ public class PresignedUrlService {
 	@Value("${aws.s3.bucketName}")
 	private String bucketName;
 
+	@Value("${aws.s3.prefix}")
+	private String prefix;
+
 	private static final int MAX_FILES_COUNT = 5;
 
 	@Transactional
@@ -67,6 +70,6 @@ public class PresignedUrlService {
 
 	private String createPath(String fileName) {
 		String fileId = createFileId();
-		return String.format("%s", fileId + fileName);
+		return String.format("%s/%s", prefix, fileId + fileName);
 	}
 }
