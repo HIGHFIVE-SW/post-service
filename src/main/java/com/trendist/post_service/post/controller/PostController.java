@@ -10,6 +10,7 @@ import com.trendist.post_service.post.dto.request.PostCreateRequest;
 import com.trendist.post_service.post.dto.response.PostCreateResponse;
 import com.trendist.post_service.post.service.PostService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,6 +19,10 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 	private final PostService postService;
 
+	@Operation(
+		summary = "자유 게시판 게시물 생성",
+		description = "사용자가 자유 게시판에 게시물을 생성합니다."
+	)
 	@PostMapping
 	public ApiResponse<PostCreateResponse> createPost(@RequestBody PostCreateRequest postCreateRequest) {
 		return ApiResponse.onSuccess(postService.createPost(postCreateRequest));
