@@ -1,10 +1,8 @@
 package com.trendist.post_service.post.dto.response;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
-import com.trendist.post_service.post.domain.Keyword;
 import com.trendist.post_service.post.domain.Post;
 
 import lombok.Builder;
@@ -16,7 +14,6 @@ public record PostCreateResponse(
 	UUID userId,
 	String nickname,
 	String content,
-	Set<Keyword> keywords,
 	List<String> imageUrls,
 	Boolean deleted
 ) {
@@ -27,7 +24,6 @@ public record PostCreateResponse(
 			.userId(post.getUserId())
 			.nickname(nickname)
 			.content(post.getContent())
-			.keywords(post.getKeywords())
 			.imageUrls(post.getImageUrls())
 			.deleted(post.getDeleted())
 			.build();

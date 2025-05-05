@@ -1,7 +1,6 @@
 package com.trendist.post_service.post.domain;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.trendist.post_service.global.common.domain.BaseTimeEntity;
@@ -10,8 +9,6 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,12 +40,6 @@ public class Post extends BaseTimeEntity {
 
 	@Column(name = "post_content")
 	private String content;
-
-	@ElementCollection(fetch = FetchType.EAGER)
-	@Enumerated(EnumType.STRING)
-	@CollectionTable(name = "post_keywords", joinColumns = @JoinColumn(name = "post_id"))
-	@Column(name = "keyword")
-	private Set<Keyword> keywords;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "post_image_urls", joinColumns = @JoinColumn(name = "post_id"))
