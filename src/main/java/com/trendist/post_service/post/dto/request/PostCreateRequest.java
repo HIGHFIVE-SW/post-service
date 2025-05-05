@@ -1,6 +1,7 @@
 package com.trendist.post_service.post.dto.request;
 
 import java.util.List;
+
 import lombok.Builder;
 
 @Builder
