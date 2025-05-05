@@ -17,12 +17,12 @@ public record PostCreateResponse(
 	List<String> imageUrls,
 	Boolean deleted
 ) {
-	public static PostCreateResponse of(Post post, String nickname) {
+	public static PostCreateResponse from(Post post) {
 		return PostCreateResponse.builder()
 			.id(post.getId())
 			.title(post.getTitle())
 			.userId(post.getUserId())
-			.nickname(nickname)
+			.nickname(post.getNickname())
 			.content(post.getContent())
 			.imageUrls(post.getImageUrls())
 			.deleted(post.getDeleted())

@@ -35,6 +35,9 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "user_id", nullable = false)
 	private UUID userId;
 
+	@Column(name = "nickname")
+	private String nickname;
+
 	@Column(name = "post_title")
 	private String title;
 

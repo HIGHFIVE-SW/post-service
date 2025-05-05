@@ -29,10 +29,11 @@ public class PostService {
 			.content(postCreateRequest.content())
 			.imageUrls(postCreateRequest.imageUrls())
 			.userId(userId)
+			.nickname(nickname)
 			.build();
 
 		postRepository.save(post);
 
-		return PostCreateResponse.of(post, nickname);
+		return PostCreateResponse.from(post);
 	}
 }
