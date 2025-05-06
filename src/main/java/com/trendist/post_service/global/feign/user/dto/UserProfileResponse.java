@@ -1,6 +1,5 @@
 package com.trendist.post_service.global.feign.user.dto;
 
-import java.util.Set;
 import java.util.UUID;
 
 import lombok.Builder;

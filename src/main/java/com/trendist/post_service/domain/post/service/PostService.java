@@ -8,8 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
+import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
 import com.trendist.post_service.global.exception.ApiException;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
 import com.trendist.post_service.domain.post.domain.Post;
@@ -43,6 +45,25 @@ public class PostService {
 		postRepository.save(post);
 
 		return PostCreateResponse.from(post);
+	}
+
+	@Transactional
+	public PostUpdateResponse updatePost(UUID postId, PostUpdateRequest postUpdateRequest) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new ApiException(ErrorStatus._POST_NOT_FOUND));
+
+		UUID nowUserId = userServiceClient.getMyProfile("").getResult().id();
+		if (!nowUserId.equals(post.getUserId())) {
+			throw new ApiException(ErrorStatus._POST_UPDATE_FORBIDDEN);
+		}
+
+		post.setTitle(postUpdateRequest.title());
+		post.setContent(postUpdateRequest.content());
+		post.setImageUrls(postUpdateRequest.imageUrls());
+
+		postRepository.save(post);
+
+		return PostUpdateResponse.from(post);
 	}
 
 	public Page<PostGetAllResponse> getAllPosts(int page) {
