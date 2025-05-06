@@ -1,4 +1,4 @@
-package com.trendist.post_service.post.dto.request;
+package com.trendist.post_service.domain.post.dto.request;
 
 import java.util.List;
 

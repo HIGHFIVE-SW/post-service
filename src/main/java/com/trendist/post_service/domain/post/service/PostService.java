@@ -1,14 +1,14 @@
-package com.trendist.post_service.post.service;
+package com.trendist.post_service.domain.post.service;
 
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
-import com.trendist.post_service.post.domain.Post;
-import com.trendist.post_service.post.dto.request.PostCreateRequest;
-import com.trendist.post_service.post.dto.response.PostCreateResponse;
-import com.trendist.post_service.post.repository.PostRepository;
+import com.trendist.post_service.domain.post.domain.Post;
+import com.trendist.post_service.domain.post.dto.request.PostCreateRequest;
+import com.trendist.post_service.domain.post.dto.response.PostCreateResponse;
+import com.trendist.post_service.domain.post.repository.PostRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

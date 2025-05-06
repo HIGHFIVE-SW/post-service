@@ -1,4 +1,4 @@
-package com.trendist.post_service.s3.dto.response;
+package com.trendist.post_service.domain.s3.dto.response;
 
 import java.util.List;
 
