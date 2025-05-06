@@ -13,4 +13,6 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 	Page<Post> findAllByDeletedFalse(Pageable pageable);
 
 	Optional<Post> findByIdAndDeletedFalse(UUID postId);
+
+	Page<Post> findByUserIdAndDeletedFalse(UUID userId, Pageable pageable);
 }

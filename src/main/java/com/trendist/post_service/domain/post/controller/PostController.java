@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
 import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
+import com.trendist.post_service.domain.post.dto.response.PostGetMineResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
 import com.trendist.post_service.global.response.ApiResponse;
@@ -60,5 +61,10 @@ public class PostController {
 	@GetMapping("/{postId}")
 	public ApiResponse<PostGetResponse> getPost(@PathVariable(name = "postId") UUID postId) {
 		return ApiResponse.onSuccess(postService.getPost(postId));
+	}
+
+	@GetMapping("/mine")
+	public ApiResponse<Page<PostGetMineResponse>> getMyPosts(@RequestParam(defaultValue = "0") int page) {
+		return ApiResponse.onSuccess(postService.getMyPosts(page));
 	}
 }
