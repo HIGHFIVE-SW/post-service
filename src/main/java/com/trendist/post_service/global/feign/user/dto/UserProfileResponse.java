@@ -11,7 +11,8 @@ public record UserProfileResponse(
 	String username,
 	String email,
 	String nickname,
-	Set<String> keywords,
+	String keyword,
+	String profileUrl,
 	int exp,
 	String tierName,
 	String tierImageUrl

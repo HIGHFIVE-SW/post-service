@@ -1,5 +1,6 @@
 package com.trendist.post_service.domain.post.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -10,4 +11,6 @@ import com.trendist.post_service.domain.post.domain.Post;
 
 public interface PostRepository extends JpaRepository<Post, UUID> {
 	Page<Post> findAllByDeletedFalse(Pageable pageable);
+
+	Optional<Post> findById(UUID postId);
 }
