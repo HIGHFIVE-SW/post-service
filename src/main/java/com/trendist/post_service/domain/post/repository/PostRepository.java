@@ -12,5 +12,5 @@ import com.trendist.post_service.domain.post.domain.Post;
 public interface PostRepository extends JpaRepository<Post, UUID> {
 	Page<Post> findAllByDeletedFalse(Pageable pageable);
 
-	Optional<Post> findById(UUID postId);
+	Optional<Post> findByIdAndDeletedFalse(UUID postId);
 }

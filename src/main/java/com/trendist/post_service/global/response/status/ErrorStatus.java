@@ -26,6 +26,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
 	_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST_001", "해당 게시물이 존재하지 않습니다."),
 	_POST_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "POST_002", "게시물을 수정 요청이 거부되었습니다."),
+	_POST_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "POST_003", "게시물을 삭제 요청이 거부되었습니다."),
 
 	//s3 관련
 	_S3_OVER_MAX_FILES(HttpStatus.BAD_REQUEST, "s3_001", "최대 파일 수를 초과하였습니다.");

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
+import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
@@ -49,7 +50,7 @@ public class PostService {
 
 	@Transactional
 	public PostUpdateResponse updatePost(UUID postId, PostUpdateRequest postUpdateRequest) {
-		Post post = postRepository.findById(postId)
+		Post post = postRepository.findByIdAndDeletedFalse(postId)
 			.orElseThrow(() -> new ApiException(ErrorStatus._POST_NOT_FOUND));
 
 		UUID nowUserId = userServiceClient.getMyProfile("").getResult().id();
@@ -66,6 +67,23 @@ public class PostService {
 		return PostUpdateResponse.from(post);
 	}
 
+	@Transactional
+	public PostDeleteResponse deletePost(UUID postId){
+		Post post = postRepository.findByIdAndDeletedFalse(postId)
+			.orElseThrow(()-> new ApiException(ErrorStatus._POST_NOT_FOUND));
+
+		UUID nowUserId = userServiceClient.getMyProfile("").getResult().id();
+		if (!nowUserId.equals(post.getUserId())) {
+			throw new ApiException(ErrorStatus._POST_DELETE_FORBIDDEN);
+		}
+
+		post.setDeleted(true);
+
+		postRepository.save(post);
+
+		return PostDeleteResponse.from(post);
+	}
+
 	public Page<PostGetAllResponse> getAllPosts(int page) {
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
 		return postRepository.findAllByDeletedFalse(pageable)
@@ -73,7 +91,7 @@ public class PostService {
 	}
 
 	public PostGetResponse getPost(UUID postId) {
-		Post post = postRepository.findById(postId)
+		Post post = postRepository.findByIdAndDeletedFalse(postId)
 			.orElseThrow(() -> new ApiException(ErrorStatus._POST_NOT_FOUND));
 		String profileUrl = userServiceClient.getUserProfile(post.getUserId()).getResult().profileUrl();
 

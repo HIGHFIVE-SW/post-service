@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
+import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
@@ -39,11 +40,16 @@ public class PostController {
 		return ApiResponse.onSuccess(postService.createPost(postCreateRequest));
 	}
 
-	@PatchMapping("/{postId}")
+	@PatchMapping("/update/{postId}")
 	public ApiResponse<PostUpdateResponse> updatePost(
 		@PathVariable(name = "postId") UUID postId,
 		@RequestBody PostUpdateRequest postUpdateRequest) {
 		return ApiResponse.onSuccess(postService.updatePost(postId, postUpdateRequest));
+	}
+
+	@PatchMapping("/delete/{postId}")
+	public ApiResponse<PostDeleteResponse> deletePost(@PathVariable(name = "postId") UUID postId) {
+		return ApiResponse.onSuccess(postService.deletePost(postId));
 	}
 
 	@GetMapping
