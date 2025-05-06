@@ -2,8 +2,13 @@ package com.trendist.post_service.domain.post.service;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
 import com.trendist.post_service.domain.post.domain.Post;
 import com.trendist.post_service.domain.post.dto.request.PostCreateRequest;
@@ -35,5 +40,11 @@ public class PostService {
 		postRepository.save(post);
 
 		return PostCreateResponse.from(post);
+	}
+
+	public Page<PostGetAllResponse> getAllPosts(int page) {
+		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
+		return postRepository.findAllByDeletedFalse(pageable)
+			.map(PostGetAllResponse::from);
 	}
 }

@@ -1,10 +1,14 @@
 package com.trendist.post_service.domain.post.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.global.response.ApiResponse;
 import com.trendist.post_service.domain.post.dto.request.PostCreateRequest;
 import com.trendist.post_service.domain.post.dto.response.PostCreateResponse;
@@ -26,5 +30,10 @@ public class PostController {
 	@PostMapping
 	public ApiResponse<PostCreateResponse> createPost(@RequestBody PostCreateRequest postCreateRequest) {
 		return ApiResponse.onSuccess(postService.createPost(postCreateRequest));
+	}
+
+	@GetMapping
+	public ApiResponse<Page<PostGetAllResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page) {
+		return ApiResponse.onSuccess(postService.getAllPosts(page));
 	}
 }
