@@ -1,4 +1,4 @@
-package com.trendist.post_service.post.domain;
+package com.trendist.post_service.domain.post.domain;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.trendist.post_service.s3.service;
+package com.trendist.post_service.domain.s3.service;
 
 import java.net.URL;
 import java.util.Date;
@@ -14,7 +14,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.trendist.post_service.global.exception.ApiException;
 import com.trendist.post_service.global.response.status.ErrorStatus;
-import com.trendist.post_service.s3.dto.response.PresignedUrlResponse;
+import com.trendist.post_service.domain.s3.dto.response.PresignedUrlResponse;
 
 import lombok.RequiredArgsConstructor;
 

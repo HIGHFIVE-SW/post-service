@@ -1,9 +1,9 @@
-package com.trendist.post_service.post.dto.response;
+package com.trendist.post_service.domain.post.dto.response;
 
 import java.util.List;
 import java.util.UUID;
 
-import com.trendist.post_service.post.domain.Post;
+import com.trendist.post_service.domain.post.domain.Post;
 
 import lombok.Builder;
 

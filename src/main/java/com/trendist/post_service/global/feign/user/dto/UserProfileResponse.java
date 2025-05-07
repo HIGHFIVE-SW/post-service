@@ -1,6 +1,5 @@
 package com.trendist.post_service.global.feign.user.dto;
 
-import java.util.Set;
 import java.util.UUID;
 
 import lombok.Builder;
@@ -11,7 +10,8 @@ public record UserProfileResponse(
 	String username,
 	String email,
 	String nickname,
-	Set<String> keywords,
+	String keyword,
+	String profileUrl,
 	int exp,
 	String tierName,
 	String tierImageUrl
