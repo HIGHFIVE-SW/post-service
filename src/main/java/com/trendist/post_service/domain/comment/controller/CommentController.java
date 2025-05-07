@@ -1,0 +1,35 @@
+package com.trendist.post_service.domain.comment.controller;
+
+import java.util.UUID;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.trendist.post_service.domain.comment.dto.request.CommentCreateRequest;
+import com.trendist.post_service.domain.comment.dto.response.CommentCreateResponse;
+import com.trendist.post_service.domain.comment.service.CommentService;
+import com.trendist.post_service.global.response.ApiResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("posts/comments")
+public class CommentController {
+	private final CommentService commentService;
+
+	@Operation(
+		summary = "게시물 댓글 작성",
+		description = "특정 게시물에 댓글을 작성합니다."
+	)
+	@PostMapping("/{postId}")
+	public ApiResponse<CommentCreateResponse> createComment(
+		@PathVariable(name = "postId") UUID postId,
+		@RequestBody CommentCreateRequest commentCreateRequest) {
+		return ApiResponse.onSuccess(commentService.createComment(postId, commentCreateRequest));
+	}
+}
