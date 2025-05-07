@@ -1,6 +1,6 @@
 package com.trendist.post_service.domain.comment.dto.request;
 
-public record CommentCreateRequest(
+public record CommentCreateOrUpdateRequest(
 	String content
 ) {
 }
