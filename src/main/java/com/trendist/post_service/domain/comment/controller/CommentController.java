@@ -1,7 +1,9 @@
 package com.trendist.post_service.domain.comment.controller;
 
+import java.util.List;
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trendist.post_service.domain.comment.dto.request.CommentCreateRequest;
 import com.trendist.post_service.domain.comment.dto.response.CommentCreateResponse;
+import com.trendist.post_service.domain.comment.dto.response.CommentGetAllResponse;
 import com.trendist.post_service.domain.comment.service.CommentService;
 import com.trendist.post_service.global.response.ApiResponse;
 
@@ -31,5 +34,15 @@ public class CommentController {
 		@PathVariable(name = "postId") UUID postId,
 		@RequestBody CommentCreateRequest commentCreateRequest) {
 		return ApiResponse.onSuccess(commentService.createComment(postId, commentCreateRequest));
+	}
+
+	@Operation(
+		summary = "댓글 확인",
+		description = "특정 게시물에 작성된 모든 댓글을 확인합니다."
+	)
+	@GetMapping("/{postId}")
+	public ApiResponse<List<CommentGetAllResponse>> getPostComments(
+		@PathVariable(name = "postId") UUID postId) {
+		return ApiResponse.onSuccess(commentService.getPostComments(postId));
 	}
 }
