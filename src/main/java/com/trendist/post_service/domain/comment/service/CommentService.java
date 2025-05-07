@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.trendist.post_service.domain.comment.domain.Comment;
 import com.trendist.post_service.domain.comment.dto.request.CommentCreateOrUpdateRequest;
 import com.trendist.post_service.domain.comment.dto.response.CommentCreateResponse;
+import com.trendist.post_service.domain.comment.dto.response.CommentDeleteResponse;
 import com.trendist.post_service.domain.comment.dto.response.CommentGetAllResponse;
 import com.trendist.post_service.domain.comment.dto.response.CommentUpdateResponse;
 import com.trendist.post_service.domain.comment.repository.CommentRepository;
@@ -51,7 +52,7 @@ public class CommentService {
 		CommentCreateOrUpdateRequest commentCreateOrUpdateRequest) {
 		UUID userId = userServiceClient.getMyProfile("").getResult().id();
 
-		Comment comment = commentRepository.findById(commentId)
+		Comment comment = commentRepository.findByIdAndDeletedFalse(commentId)
 			.orElseThrow(() -> new ApiException(ErrorStatus._POST_NOT_FOUND));
 		//충돌 안나게 ErrorStatus 추가는 리뷰 작업 끝나고 진행
 
@@ -66,8 +67,27 @@ public class CommentService {
 		return CommentUpdateResponse.from(comment);
 	}
 
+	@Transactional
+	public CommentDeleteResponse deleteComment(UUID commentId) {
+		UUID userId = userServiceClient.getMyProfile("").getResult().id();
+
+		Comment comment = commentRepository.findByIdAndDeletedFalse(commentId)
+			.orElseThrow(() -> new ApiException(ErrorStatus._POST_NOT_FOUND));
+		//충돌 안나게 ErrorStatus 추가는 리뷰 작업 끝나고 진행
+
+		if (!userId.equals(comment.getUserId())) {
+			throw new ApiException(ErrorStatus._POST_UPDATE_FORBIDDEN);
+			//충돌안나게 ErrorStatus 추가는 리뷰 작업 끝나고 진행
+		}
+
+		comment.setDeleted(true);
+		commentRepository.save(comment);
+
+		return CommentDeleteResponse.from(comment);
+	}
+
 	public List<CommentGetAllResponse> getPostComments(UUID postId) {
-		List<Comment> comments = commentRepository.findAllByPostId(postId);
+		List<Comment> comments = commentRepository.findAllByPostIdAndDeletedFalse(postId);
 
 		return comments.stream()
 			.map(comment -> {

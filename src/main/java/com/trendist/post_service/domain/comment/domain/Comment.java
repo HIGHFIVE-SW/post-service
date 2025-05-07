@@ -39,4 +39,8 @@ public class Comment extends BaseTimeEntity {
 
 	@Column(name = "content")
 	private String content;
+
+	@Column(name = "deleted")
+	@Builder.Default
+	private Boolean deleted = false;
 }

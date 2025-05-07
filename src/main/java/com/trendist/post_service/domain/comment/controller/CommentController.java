@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trendist.post_service.domain.comment.dto.request.CommentCreateOrUpdateRequest;
 import com.trendist.post_service.domain.comment.dto.response.CommentCreateResponse;
+import com.trendist.post_service.domain.comment.dto.response.CommentDeleteResponse;
 import com.trendist.post_service.domain.comment.dto.response.CommentGetAllResponse;
 import com.trendist.post_service.domain.comment.dto.response.CommentUpdateResponse;
 import com.trendist.post_service.domain.comment.service.CommentService;
@@ -43,12 +44,21 @@ public class CommentController {
 		summary = "댓글 수정",
 		description = "특정 댓글을 수정합니다."
 	)
-	@PatchMapping("/{commentId}")
+	@PatchMapping("/update/{commentId}")
 	public ApiResponse<CommentUpdateResponse> updateComment(
 		@PathVariable(name = "commentId") UUID commentId,
 		@RequestBody CommentCreateOrUpdateRequest commentCreateOrUpdateRequest
 	) {
 		return ApiResponse.onSuccess(commentService.updateComment(commentId, commentCreateOrUpdateRequest));
+	}
+
+	@Operation(
+		summary = "댓글 삭제",
+		description = "특정 댓글을 삭제합니다."
+	)
+	@PatchMapping("/delete/{commentId}")
+	public ApiResponse<CommentDeleteResponse> deleteComment(@PathVariable(name = "commentId") UUID commentId) {
+		return ApiResponse.onSuccess(commentService.deleteComment(commentId));
 	}
 
 	@Operation(
