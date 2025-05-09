@@ -9,6 +9,8 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,6 +42,17 @@ public class Review extends BaseTimeEntity {
 
 	@Column(name = "review_title")
 	private String title;
+
+	//review 작성 시 keyword 1개 선택
+	@Enumerated(EnumType.STRING)
+	@Column(name="review_keyword")
+	private Keyword keyword;
+
+	//review 작성 시 ActivityType 1개 선택
+	@Enumerated(EnumType.STRING)
+	@Column(name="review_activity_type")
+	private ActivityType activityType;
+
 
 	@Column(name = "review_content")
 	private String content;

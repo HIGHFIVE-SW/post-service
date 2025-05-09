@@ -3,6 +3,8 @@ package com.trendist.post_service.domain.review.dto.response;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.trendist.post_service.domain.review.domain.ActivityType;
+import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.domain.Review;
 
 import lombok.Builder;
@@ -11,6 +13,8 @@ import lombok.Builder;
 public record ReviewGetResponse(
 	UUID id,
 	String title,
+	Keyword keyword,
+	ActivityType activityType,
 	String content,
 	UUID userId,
 	String nickname,
@@ -21,6 +25,8 @@ public record ReviewGetResponse(
 		return ReviewGetResponse.builder()
 			.id(review.getId())
 			.title(review.getTitle())
+			.keyword(review.getKeyword())
+			.activityType(review.getActivityType())
 			.content(review.getContent())
 			.userId(review.getUserId())
 			.nickname(review.getNickname())

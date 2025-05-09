@@ -38,6 +38,8 @@ public class ReviewService {
 
 		Review review = Review.builder()
 			.title(reviewCreateRequest.title())
+			.keyword(reviewCreateRequest.keyword())
+			.activityType(reviewCreateRequest.activityType())
 			.content(reviewCreateRequest.content())
 			.imageUrls(reviewCreateRequest.imageUrls())
 			.userId(userId)
