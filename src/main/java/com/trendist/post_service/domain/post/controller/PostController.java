@@ -72,6 +72,15 @@ public class PostController {
 	}
 
 	@Operation(
+		summary = "자유 게시판 전체 게시물 좋아요 순 조회",
+		description = "자유 게시판에 전체 게시물을 좋아요가 많은 순으로 조회합니다."
+	)
+	@GetMapping("/like")
+	public ApiResponse<Page<PostGetAllResponse>> getAllPostsByLikeCount(@RequestParam(defaultValue = "0") int page) {
+		return ApiResponse.onSuccess(postService.getAllPostsByLikeCount(page));
+	}
+
+	@Operation(
 		summary = "자유 게시판 특정 게시물 조회",
 		description = "사용자가 자유 게시판에 있는 특정 게시물을 상세 조회합니다."
 	)

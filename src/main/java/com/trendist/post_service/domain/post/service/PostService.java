@@ -1,6 +1,5 @@
 package com.trendist.post_service.domain.post.service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -93,6 +92,12 @@ public class PostService {
 	public Page<PostGetAllResponse> getAllPosts(int page) {
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
 		return postRepository.findAllByDeletedFalse(pageable)
+			.map(PostGetAllResponse::from);
+	}
+
+	public Page<PostGetAllResponse> getAllPostsByLikeCount(int page) {
+		Pageable pageable = PageRequest.of(page, 10);
+		return postRepository.findAllByDeletedFalseOrderByLikeCountDesc(pageable)
 			.map(PostGetAllResponse::from);
 	}
 
