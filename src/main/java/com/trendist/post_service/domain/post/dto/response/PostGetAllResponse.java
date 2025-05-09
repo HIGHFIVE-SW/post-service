@@ -12,6 +12,7 @@ public record PostGetAllResponse(
 	UUID id,
 	String title,
 	String nickname,
+	Integer likeCount,
 	LocalDateTime createdAt
 	//좋아요 수도 추가되어야함
 ) {
@@ -20,6 +21,7 @@ public record PostGetAllResponse(
 			.id(post.getId())
 			.title(post.getTitle())
 			.nickname(post.getNickname())
+			.likeCount(post.getLikeCount())
 			.createdAt(post.getCreatedAt())
 			.build();
 	}
