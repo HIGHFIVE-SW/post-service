@@ -1,5 +1,6 @@
 package com.trendist.post_service.domain.post.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -8,12 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.trendist.post_service.domain.post.domain.PostLike;
 import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
 import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetMineResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
+import com.trendist.post_service.domain.post.dto.response.PostLikeResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
+import com.trendist.post_service.domain.post.repository.PostLikeRepository;
 import com.trendist.post_service.global.exception.ApiException;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
 import com.trendist.post_service.domain.post.domain.Post;
@@ -29,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostService {
 	private final PostRepository postRepository;
+	private final PostLikeRepository postLikeRepository;
 	private final UserServiceClient userServiceClient;
 
 	@Transactional
@@ -105,5 +110,30 @@ public class PostService {
 
 		return postRepository.findByUserIdAndDeletedFalse(userId, pageable)
 			.map(PostGetMineResponse::from);
+	}
+
+	@Transactional
+	public PostLikeResponse likePost(UUID postId) {
+		UUID userId = userServiceClient.getMyProfile("").getResult().id();
+
+		PostLike postLike;
+		boolean like;
+
+		if (!postLikeRepository.existsByPostIdAndUserId(postId, userId)) {
+			postLike = PostLike.builder()
+				.postId(postId)
+				.userId(userId)
+				.build();
+			postLikeRepository.save(postLike);
+			postRepository.incrementLikeCount(postId);
+			like = true;
+		} else {
+			postLike = postLikeRepository.findByPostIdAndUserId(postId, userId)
+				.orElseThrow(() -> new ApiException(ErrorStatus._POST_NOT_FOUND)); //errorStatus 바꿔야함.
+			postLikeRepository.deleteByPostIdAndUserId(postId, userId);
+			postRepository.decrementLikeCount(postId);
+			like = false;
+		}
+		return PostLikeResponse.of(postLike, like);
 	}
 }
