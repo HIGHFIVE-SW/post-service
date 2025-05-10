@@ -12,6 +12,7 @@ public record PostGetResponse(
 	UUID id,
 	String title,
 	String content,
+	Integer likeCount,
 	UUID userId,
 	String nickname,
 	String profileUrl,
@@ -23,6 +24,7 @@ public record PostGetResponse(
 			.id(post.getId())
 			.title(post.getTitle())
 			.content(post.getContent())
+			.likeCount(post.getLikeCount())
 			.userId(post.getUserId())
 			.nickname(post.getNickname())
 			.profileUrl(profileUrl)

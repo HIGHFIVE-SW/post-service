@@ -19,6 +19,7 @@ import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
 import com.trendist.post_service.domain.review.service.ReviewService;
 import com.trendist.post_service.global.response.ApiResponse;
@@ -88,4 +89,12 @@ public class ReviewController {
 		return ApiResponse.onSuccess(reviewService.getMyReviews(page));
 	}
 
+	@Operation(
+		summary = "리뷰 게시물 좋아요",
+		description = "사용자가 리뷰 게시판에 있는 특정 게시물에 좋아요를 누르거나 취소합니다."
+	)
+	@PostMapping("/{reviewId}/like")
+	public ApiResponse<ReviewLikeResponse> likeReview(@PathVariable(name = "reviewId") UUID reviewId) {
+		return ApiResponse.onSuccess(reviewService.likeReview(reviewId));
+	}
 }

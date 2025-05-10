@@ -1,57 +1,49 @@
-package com.trendist.post_service.domain.post.domain;
+package com.trendist.post_service.domain.comment.domain;
 
-import java.util.List;
 import java.util.UUID;
 
+import com.trendist.post_service.domain.post.domain.Post;
+import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.global.common.domain.BaseTimeEntity;
 
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "posts")
+@Entity(name = "comments")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post extends BaseTimeEntity {
+public class Comment extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "post_id")
+	@Column(name = "comment_id")
 	private UUID id;
 
 	@Column(name = "user_id", nullable = false)
 	private UUID userId;
 
-	@Column(name = "nickname")
-	private String nickname;
+	@ManyToOne
+	@JoinColumn(name = "post_id")
+	private Post post;
 
-	@Column(name = "post_title")
-	private String title;
+	@ManyToOne
+	@JoinColumn(name = "review_id")
+	private Review review;
 
-	@Column(name = "post_content")
+	@Column(name = "content")
 	private String content;
-
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "post_image_urls", joinColumns = @JoinColumn(name = "post_id"))
-	@Column(name = "image_urls")
-	private List<String> imageUrls;
-
-	@Column(name = "post_like_count")
-	@Builder.Default
-	private Integer likeCount = 0;
 
 	@Column(name = "deleted")
 	@Builder.Default
