@@ -36,6 +36,11 @@ public class ReviewService {
 		UUID userId = userServiceClient.getMyProfile("").getResult().id();
 		String nickname = userServiceClient.getMyProfile("").getResult().nickname();
 
+		//review 작성 시 이미지 최소 1장 필수
+		if (reviewCreateRequest.imageUrls().isEmpty()) {
+			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
+		}
+
 		Review review = Review.builder()
 			.title(reviewCreateRequest.title())
 			.keyword(reviewCreateRequest.keyword())
@@ -62,6 +67,11 @@ public class ReviewService {
 		UUID nowUserId = userServiceClient.getMyProfile("").getResult().id();
 		if (!nowUserId.equals(review.getUserId())) {
 			throw new ApiException(ErrorStatus._REVIEW_UPDATE_FORBIDDEN);
+		}
+
+		//review 작성 시 이미지 최소 1장 필수
+		if (reviewUpdateRequest.imageUrls().isEmpty()) {
+			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
 		}
 
 		review.setTitle(reviewUpdateRequest.title());
