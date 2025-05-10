@@ -24,20 +24,20 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("posts/comments")
+@RequestMapping("/comments")
 public class CommentController {
 	private final CommentService commentService;
 
 	@Operation(
 		summary = "게시물 댓글 작성",
-		description = "특정 게시물에 댓글을 작성합니다."
+		description = "특정 게시물 혹은 리뷰 게시물에 댓글을 작성합니다."
 	)
-	@PostMapping("/{postId}")
+	@PostMapping("/{id}")
 	public ApiResponse<CommentCreateResponse> createComment(
-		@PathVariable(name = "postId") UUID postId,
+		@PathVariable(name = "id") UUID id,
 		@RequestBody CommentCreateOrUpdateRequest commentCreateOrUpdateRequest
 	) {
-		return ApiResponse.onSuccess(commentService.createComment(postId, commentCreateOrUpdateRequest));
+		return ApiResponse.onSuccess(commentService.createComment(id, commentCreateOrUpdateRequest));
 	}
 
 	@Operation(
@@ -65,9 +65,9 @@ public class CommentController {
 		summary = "댓글 확인",
 		description = "특정 게시물에 작성된 모든 댓글을 확인합니다."
 	)
-	@GetMapping("/{postId}")
+	@GetMapping("/{id}")
 	public ApiResponse<List<CommentGetAllResponse>> getPostComments(
-		@PathVariable(name = "postId") UUID postId) {
-		return ApiResponse.onSuccess(commentService.getPostComments(postId));
+		@PathVariable(name = "id") UUID id) {
+		return ApiResponse.onSuccess(commentService.getPostComments(id));
 	}
 }

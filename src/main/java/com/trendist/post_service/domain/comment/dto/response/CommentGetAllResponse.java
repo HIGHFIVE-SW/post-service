@@ -11,6 +11,7 @@ import lombok.Builder;
 public record CommentGetAllResponse(
 	UUID commentId,
 	UUID postId,
+	UUID reviewId,
 	UUID userId,
 	String nickname,
 	String profileUrl,
@@ -18,9 +19,13 @@ public record CommentGetAllResponse(
 	LocalDateTime createdAt
 ) {
 	public static CommentGetAllResponse of(Comment comment, String nickname, String profileUrl) {
+		UUID postId = comment.getPost() != null ? comment.getPost().getId() : null;
+		UUID reviewId = comment.getReview() != null ? comment.getReview().getId() : null;
+
 		return CommentGetAllResponse.builder()
 			.commentId(comment.getId())
-			.postId(comment.getPost().getId())
+			.postId(postId)
+			.reviewId(reviewId)
 			.userId(comment.getUserId())
 			.nickname(nickname)
 			.profileUrl(profileUrl)

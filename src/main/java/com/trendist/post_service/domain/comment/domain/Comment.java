@@ -3,6 +3,7 @@ package com.trendist.post_service.domain.comment.domain;
 import java.util.UUID;
 
 import com.trendist.post_service.domain.post.domain.Post;
+import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.global.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -36,6 +37,10 @@ public class Comment extends BaseTimeEntity {
 	@ManyToOne
 	@JoinColumn(name = "post_id")
 	private Post post;
+
+	@ManyToOne
+	@JoinColumn(name = "review_id")
+	private Review review;
 
 	@Column(name = "content")
 	private String content;

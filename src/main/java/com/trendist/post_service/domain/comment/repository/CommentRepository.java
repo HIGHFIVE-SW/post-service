@@ -11,5 +11,7 @@ import com.trendist.post_service.domain.comment.domain.Comment;
 public interface CommentRepository extends JpaRepository<Comment, UUID> {
 	List<Comment> findAllByPostIdAndDeletedFalse(UUID postId);
 
+	List<Comment> findAllByReviewIdAndDeletedFalse(UUID reviewId);
+
 	Optional<Comment> findByIdAndDeletedFalse(UUID commentId);
 }
