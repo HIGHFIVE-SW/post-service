@@ -40,6 +40,9 @@ public class ReviewService {
 			.title(reviewCreateRequest.title())
 			.keyword(reviewCreateRequest.keyword())
 			.activityType(reviewCreateRequest.activityType())
+			.activityPeriod(reviewCreateRequest.activityPeriod())
+			.activityEndDate(reviewCreateRequest.activityEndDate())
+			.activityName(reviewCreateRequest.activityName())
 			.content(reviewCreateRequest.content())
 			.imageUrls(reviewCreateRequest.imageUrls())
 			.userId(userId)
@@ -62,6 +65,11 @@ public class ReviewService {
 		}
 
 		review.setTitle(reviewUpdateRequest.title());
+		review.setKeyword(reviewUpdateRequest.keyword());
+		review.setActivityType(reviewUpdateRequest.activityType());
+		review.setActivityPeriod(reviewUpdateRequest.activityPeriod());
+		review.setActivityEndDate(reviewUpdateRequest.activityEndDate());
+		review.setActivityName(reviewUpdateRequest.activityName());
 		review.setContent(reviewUpdateRequest.content());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 

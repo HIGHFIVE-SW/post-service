@@ -1,5 +1,6 @@
 package com.trendist.post_service.domain.review.domain;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,14 +46,26 @@ public class Review extends BaseTimeEntity {
 
 	//review 작성 시 keyword 1개 선택
 	@Enumerated(EnumType.STRING)
-	@Column(name="review_keyword")
+	@Column(name = "review_keyword")
 	private Keyword keyword;
 
 	//review 작성 시 ActivityType 1개 선택
 	@Enumerated(EnumType.STRING)
-	@Column(name="review_activity_type")
+	@Column(name = "review_activity_type")
 	private ActivityType activityType;
 
+	//review 작성 시 활동 기간 1개 선택
+	@Enumerated(EnumType.STRING)
+	@Column(name = "activity_period")
+	private ActivityPeriod activityPeriod;
+
+	//review 작성 시 활종 종료일 선택
+	@Column(name = "activity_end_date")
+	private LocalDate activityEndDate;
+
+	//review 작성 참여 활동 이름 입력받음
+	@Column(name = "activity_name")
+	private String activityName;
 
 	@Column(name = "review_content")
 	private String content;
