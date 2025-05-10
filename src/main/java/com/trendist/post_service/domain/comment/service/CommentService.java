@@ -71,7 +71,6 @@ public class CommentService {
 
 		if (!userId.equals(comment.getUserId())) {
 			throw new ApiException(ErrorStatus._COMMENT_UPDATE_FORBIDDEN);
-			//충돌안나게 ErrorStatus 추가는 리뷰 작업 끝나고 진행
 		}
 
 		comment.setContent(commentCreateOrUpdateRequest.content());
@@ -86,11 +85,9 @@ public class CommentService {
 
 		Comment comment = commentRepository.findByIdAndDeletedFalse(commentId)
 			.orElseThrow(() -> new ApiException(ErrorStatus._COMMENT_NOT_FOUND));
-		//충돌 안나게 ErrorStatus 추가는 리뷰 작업 끝나고 진행
 
 		if (!userId.equals(comment.getUserId())) {
 			throw new ApiException(ErrorStatus._COMMENT_DELETE_FORBIDDEN);
-			//충돌안나게 ErrorStatus 추가는 리뷰 작업 끝나고 진행
 		}
 
 		comment.setDeleted(true);

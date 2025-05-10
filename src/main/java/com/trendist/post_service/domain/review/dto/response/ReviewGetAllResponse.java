@@ -12,6 +12,7 @@ public record ReviewGetAllResponse(
 	UUID id,
 	String title,
 	String nickname,
+	Integer likeCount,
 	LocalDateTime createAt
 	//좋아요 수 추가예정
 ) {
@@ -20,6 +21,7 @@ public record ReviewGetAllResponse(
 			.id(review.getId())
 			.title(review.getTitle())
 			.nickname(review.getNickname())
+			.likeCount(review.getLikeCount())
 			.createAt(review.getCreatedAt())
 			.build();
 	}
