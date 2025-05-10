@@ -32,7 +32,6 @@ public enum ErrorStatus implements BaseErrorCode {
 	_REVIEW_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "REVIEW_002", "게시물을 수정 요청이 거부되었습니다."),
 	_REVIEW_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "REVIEW_003", "게시물을 삭제 요청이 거부되었습니다."),
 
-
 	//s3 관련
 	_S3_OVER_MAX_FILES(HttpStatus.BAD_REQUEST, "s3_001", "최대 파일 수를 초과하였습니다.");
 
