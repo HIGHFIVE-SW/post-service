@@ -37,7 +37,7 @@ public class ReviewService {
 		String nickname = userServiceClient.getMyProfile("").getResult().nickname();
 
 		//review 작성 시 이미지 최소 1장 필수
-		if (reviewCreateRequest.imageUrls().isEmpty()) {
+		if (reviewCreateRequest.imageUrls() == null || reviewCreateRequest.imageUrls().isEmpty()) {
 			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
 		}
 
@@ -70,7 +70,7 @@ public class ReviewService {
 		}
 
 		//review 작성 시 이미지 최소 1장 필수
-		if (reviewUpdateRequest.imageUrls().isEmpty()) {
+		if (reviewUpdateRequest.imageUrls() == null || reviewUpdateRequest.imageUrls().isEmpty()) {
 			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
 		}
 
