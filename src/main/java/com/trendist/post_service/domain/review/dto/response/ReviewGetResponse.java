@@ -21,6 +21,7 @@ public record ReviewGetResponse(
 	LocalDate activityEndDate,
 	String activityName,
 	String content,
+	Integer likeCount,
 	UUID userId,
 	String nickname,
 	String profileUrl,
@@ -36,6 +37,7 @@ public record ReviewGetResponse(
 			.activityEndDate(review.getActivityEndDate())
 			.activityName(review.getActivityName())
 			.content(review.getContent())
+			.likeCount(review.getLikeCount())
 			.userId(review.getUserId())
 			.nickname(review.getNickname())
 			.profileUrl(profileUrl)

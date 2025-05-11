@@ -75,6 +75,10 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "image_urls")
 	private List<String> imageUrls;
 
+	@Column(name = "review_like_count")
+	@Builder.Default
+	private Integer likeCount = 0;
+
 	@Column(name = "deleted")
 	@Builder.Default
 	private Boolean deleted = false;

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.trendist.post_service.domain.review.domain.Review;
+import com.trendist.post_service.domain.review.domain.ReviewLike;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
@@ -17,7 +18,9 @@ import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
+import com.trendist.post_service.domain.review.repository.ReviewLikeRepository;
 import com.trendist.post_service.domain.review.repository.ReviewRepository;
 import com.trendist.post_service.global.exception.ApiException;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
@@ -29,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReviewService {
 	private final ReviewRepository reviewRepository;
+	private final ReviewLikeRepository reviewLikeRepository;
 	private final UserServiceClient userServiceClient;
 
 	@Transactional
@@ -125,5 +129,31 @@ public class ReviewService {
 
 		return reviewRepository.findByUserIdAndDeletedFalse(userId, pageable)
 			.map(ReviewGetMineResponse::from);
+	}
+
+	@Transactional
+	public ReviewLikeResponse likeReview(UUID reviewId) {
+		UUID userId = userServiceClient.getMyProfile("").getResult().id();
+
+		ReviewLike reviewLike;
+		boolean like;
+
+		if (!reviewLikeRepository.existsByReviewIdAndUserId(reviewId, userId)) {
+			reviewLike = ReviewLike.builder()
+				.reviewId(reviewId)
+				.userId(userId)
+				.build();
+			reviewLikeRepository.save(reviewLike);
+			reviewRepository.incrementLikeCount(reviewId);
+			like = true;
+		} else {
+			reviewLike = reviewLikeRepository.findByReviewIdAndUserId(reviewId, userId)
+				.orElseThrow(() -> new ApiException(ErrorStatus._REVIEW_NOT_FOUND));//errorStatus 바꿔야함.
+			reviewLikeRepository.deleteByReviewIdAndUserId(reviewId, userId);
+			reviewRepository.decrementLikeCount(reviewId);
+			like = false;
+		}
+
+		return ReviewLikeResponse.of(reviewLike, like);
 	}
 }

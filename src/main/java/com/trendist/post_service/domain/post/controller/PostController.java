@@ -17,6 +17,7 @@ import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetMineResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
+import com.trendist.post_service.domain.post.dto.response.PostLikeResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
 import com.trendist.post_service.global.response.ApiResponse;
 import com.trendist.post_service.domain.post.dto.request.PostCreateRequest;
@@ -71,6 +72,15 @@ public class PostController {
 	}
 
 	@Operation(
+		summary = "자유 게시판 전체 게시물 좋아요 순 조회",
+		description = "자유 게시판에 전체 게시물을 좋아요가 많은 순으로 조회합니다."
+	)
+	@GetMapping("/like")
+	public ApiResponse<Page<PostGetAllResponse>> getAllPostsByLikeCount(@RequestParam(defaultValue = "0") int page) {
+		return ApiResponse.onSuccess(postService.getAllPostsByLikeCount(page));
+	}
+
+	@Operation(
 		summary = "자유 게시판 특정 게시물 조회",
 		description = "사용자가 자유 게시판에 있는 특정 게시물을 상세 조회합니다."
 	)
@@ -86,5 +96,14 @@ public class PostController {
 	@GetMapping("/mine")
 	public ApiResponse<Page<PostGetMineResponse>> getMyPosts(@RequestParam(defaultValue = "0") int page) {
 		return ApiResponse.onSuccess(postService.getMyPosts(page));
+	}
+
+	@Operation(
+		summary = "자유 게시판 게시물 좋아요",
+		description = "사용자가 자유 게시판에 있는 특정 게시물에 좋아요를 누르거나 취소합니다."
+	)
+	@PostMapping("/{postId}/like")
+	public ApiResponse<PostLikeResponse> likePost(@PathVariable(name = "postId") UUID postId) {
+		return ApiResponse.onSuccess(postService.likePost(postId));
 	}
 }
