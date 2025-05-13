@@ -134,7 +134,7 @@ public class PostService {
 			like = true;
 		} else {
 			postLike = postLikeRepository.findByPostIdAndUserId(postId, userId)
-				.orElseThrow(() -> new ApiException(ErrorStatus._POST_NOT_FOUND)); //errorStatus 바꿔야함.
+				.orElseThrow(() -> new ApiException(ErrorStatus._POST_LIKE_NOT_FOUND));
 			postLikeRepository.deleteByPostIdAndUserId(postId, userId);
 			postRepository.decrementLikeCount(postId);
 			like = false;

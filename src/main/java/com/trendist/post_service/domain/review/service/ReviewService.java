@@ -168,7 +168,7 @@ public class ReviewService {
 			like = true;
 		} else {
 			reviewLike = reviewLikeRepository.findByReviewIdAndUserId(reviewId, userId)
-				.orElseThrow(() -> new ApiException(ErrorStatus._REVIEW_NOT_FOUND));//errorStatus 바꿔야함.
+				.orElseThrow(() -> new ApiException(ErrorStatus._REVIEW_LIKE_NOT_FOUND));
 			reviewLikeRepository.deleteByReviewIdAndUserId(reviewId, userId);
 			reviewRepository.decrementLikeCount(reviewId);
 			like = false;
