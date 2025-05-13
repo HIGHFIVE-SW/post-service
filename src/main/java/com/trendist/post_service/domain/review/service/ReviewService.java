@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.domain.review.domain.ReviewLike;
@@ -125,6 +126,12 @@ public class ReviewService {
 	public Page<ReviewGetAllResponse> getAllReviewsByKeyword(Keyword keyword, int page) {
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
 		return reviewRepository.findAllByKeywordAndDeletedFalse(keyword, pageable)
+			.map(ReviewGetAllResponse::from);
+	}
+
+	public Page<ReviewGetAllResponse> getAllReviewsByActivityType(ActivityType activityType, int page) {
+		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
+		return reviewRepository.findAllByActivityTypeAndDeletedFalse(activityType, pageable)
 			.map(ReviewGetAllResponse::from);
 	}
 

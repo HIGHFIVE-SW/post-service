@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
@@ -85,11 +86,22 @@ public class ReviewController {
 		summary = "리뷰 게시판 특정 키워드별 조회",
 		description = "리뷰 게시판 특정 키워드에 해당하는 리뷰를 조회합니다."
 	)
-	@GetMapping("keyword/{keyword}")
+	@GetMapping("/keyword/{keyword}")
 	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviewsByKeyword(
 		@RequestParam(defaultValue = "0") int page,
 		@PathVariable(name = "keyword") Keyword keyword) {
 		return ApiResponse.onSuccess(reviewService.getAllReviewsByKeyword(keyword, page));
+	}
+
+	@Operation(
+		summary = "리뷰 게시판 특정 활동 종류별 조회",
+		description = "리뷰 게시판 특정 종류에 해당하는 리뷰를 조회합니다."
+	)
+	@GetMapping("/type/{activityType}")
+	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviewsByActivityType(
+		@RequestParam(defaultValue = "0") int page,
+		@PathVariable(name = "activityType") ActivityType activityType) {
+		return ApiResponse.onSuccess(reviewService.getAllReviewsByActivityType(activityType, page));
 	}
 
 	@Operation(
