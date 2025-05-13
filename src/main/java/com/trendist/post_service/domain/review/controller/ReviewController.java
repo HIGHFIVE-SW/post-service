@@ -72,6 +72,15 @@ public class ReviewController {
 	}
 
 	@Operation(
+		summary = "리뷰 게시판 전체 게시물 좋아요순 조회",
+		description = "리뷰 게시판에 전체 게시물을 좋아요순으로 조회합니다."
+	)
+	@GetMapping("/like")
+	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviewsByLikeCunt(@RequestParam(defaultValue = "0") int page) {
+		return ApiResponse.onSuccess(reviewService.getAllReviewsByLikeCount(page));
+	}
+
+	@Operation(
 		summary = "리뷰 게시판 특정 게시물 조회",
 		description = "사용자가 리뷰 게시판에 있는 특정 게시물을 상세 조회합니다."
 	)

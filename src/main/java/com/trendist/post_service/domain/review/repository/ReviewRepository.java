@@ -19,6 +19,8 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
 	Page<Review> findByUserIdAndDeletedFalse(UUID id, Pageable pageable);
 
+	Page<Review> findAllByDeletedFalseOrderByLikeCountDesc(Pageable pageable);
+
 	@Modifying
 	@Query("UPDATE reviews r SET r.likeCount = r.likeCount + 1 WHERE r.id = :reviewId")
 	void incrementLikeCount(@Param("reviewId") UUID reviewId);

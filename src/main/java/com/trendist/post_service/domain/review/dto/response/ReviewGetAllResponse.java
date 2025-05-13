@@ -14,7 +14,6 @@ public record ReviewGetAllResponse(
 	String nickname,
 	Integer likeCount,
 	LocalDateTime createAt
-	//좋아요 수 추가예정
 ) {
 	public static ReviewGetAllResponse from(Review review) {
 		return ReviewGetAllResponse.builder()

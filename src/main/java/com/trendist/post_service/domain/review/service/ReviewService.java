@@ -115,6 +115,12 @@ public class ReviewService {
 			.map(ReviewGetAllResponse::from);
 	}
 
+	public Page<ReviewGetAllResponse> getAllReviewsByLikeCount(int page) {
+		Pageable pageable = PageRequest.of(page, 10);
+		return reviewRepository.findAllByDeletedFalseOrderByLikeCountDesc(pageable)
+			.map(ReviewGetAllResponse::from);
+	}
+
 	public ReviewGetResponse getReview(UUID reviewId) {
 		Review review = reviewRepository.findByIdAndDeletedFalse(reviewId)
 			.orElseThrow(() -> new ApiException(ErrorStatus._REVIEW_NOT_FOUND));
