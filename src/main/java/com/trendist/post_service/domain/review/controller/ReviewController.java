@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
@@ -78,6 +79,17 @@ public class ReviewController {
 	@GetMapping("/like")
 	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviewsByLikeCunt(@RequestParam(defaultValue = "0") int page) {
 		return ApiResponse.onSuccess(reviewService.getAllReviewsByLikeCount(page));
+	}
+
+	@Operation(
+		summary = "리뷰 게시판 특정 키워드별 조회",
+		description = "리뷰 게시판 특정 키워드에 해당하는 리뷰를 조회합니다."
+	)
+	@GetMapping("keyword/{keyword}")
+	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviewsByKeyword(
+		@RequestParam(defaultValue = "0") int page,
+		@PathVariable(name = "keyword") Keyword keyword) {
+		return ApiResponse.onSuccess(reviewService.getAllReviewsByKeyword(keyword, page));
 	}
 
 	@Operation(

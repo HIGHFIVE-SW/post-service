@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.domain.Review;
 
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
@@ -20,6 +21,8 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 	Page<Review> findByUserIdAndDeletedFalse(UUID id, Pageable pageable);
 
 	Page<Review> findAllByDeletedFalseOrderByLikeCountDesc(Pageable pageable);
+
+	Page<Review> findAllByKeywordAndDeletedFalse(Keyword keyword, Pageable pageable);
 
 	@Modifying
 	@Query("UPDATE reviews r SET r.likeCount = r.likeCount + 1 WHERE r.id = :reviewId")
