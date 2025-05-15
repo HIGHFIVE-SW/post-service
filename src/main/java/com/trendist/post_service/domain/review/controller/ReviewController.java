@@ -127,7 +127,7 @@ public class ReviewController {
 
 	@Operation(
 		summary = "활동 종류별 자신이 진행한 활동 통계 조회",
-		description = "활동 종유별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
+		description = "활동 종류별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
 	)
 	@GetMapping("/mine/type/count")
 	public ApiResponse<List<ReviewGetTypeCountResponse>> countMyReviewsByType() {
@@ -136,7 +136,7 @@ public class ReviewController {
 
 	@Operation(
 		summary = "활동 종류별 특정 사용자가 진행한 활동 통계 조회",
-		description = "활동 종유별로 특정 사용자가 진행한 활동들이 총 몇개인지 통계를 조회합니다."
+		description = "활동 종류별로 특정 사용자가 진행한 활동들이 총 몇개인지 통계를 조회합니다."
 	)
 	@GetMapping("/{userId}/type/count")
 	public ApiResponse<List<ReviewGetTypeCountResponse>> countUserReviewsByType(
