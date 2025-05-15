@@ -20,7 +20,7 @@ import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetCountByType;
+import com.trendist.post_service.domain.review.dto.response.ReviewGetCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
@@ -129,7 +129,7 @@ public class ReviewController {
 		description = "활동 종유별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
 	)
 	@GetMapping("/mine/count")
-	public ApiResponse<List<ReviewGetCountByType>> countMyReviewsByType() {
+	public ApiResponse<List<ReviewGetCountResponse>> countMyReviewsByType() {
 		return ApiResponse.onSuccess(reviewService.countMyReviewsByType());
 	}
 
@@ -138,7 +138,7 @@ public class ReviewController {
 		description = "활동 종유별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
 	)
 	@GetMapping("/{userId}/count")
-	public ApiResponse<List<ReviewGetCountByType>> countUserReviewsByType(@PathVariable(name = "userId") UUID userId) {
+	public ApiResponse<List<ReviewGetCountResponse>> countUserReviewsByType(@PathVariable(name = "userId") UUID userId) {
 		return ApiResponse.onSuccess(reviewService.countUserReviewsByType(userId));
 	}
 
