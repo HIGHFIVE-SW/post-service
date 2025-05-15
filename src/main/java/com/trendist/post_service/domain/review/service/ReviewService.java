@@ -86,11 +86,6 @@ public class ReviewService {
 		}
 
 		review.setTitle(reviewUpdateRequest.title());
-		review.setKeyword(reviewUpdateRequest.keyword());
-		review.setActivityType(reviewUpdateRequest.activityType());
-		review.setActivityPeriod(reviewUpdateRequest.activityPeriod());
-		review.setActivityEndDate(reviewUpdateRequest.activityEndDate());
-		review.setActivityName(reviewUpdateRequest.activityName());
 		review.setContent(reviewUpdateRequest.content());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 

@@ -16,11 +16,6 @@ import lombok.Builder;
 public record ReviewUpdateResponse(
 	UUID id,
 	String title,
-	Keyword keyword,
-	ActivityType activityType,
-	ActivityPeriod activityPeriod,
-	LocalDate activityEndDate,
-	String activityName,
 	String content,
 	List<String> imageUrls,
 	LocalDateTime updatedAt
@@ -29,11 +24,6 @@ public record ReviewUpdateResponse(
 		return ReviewUpdateResponse.builder()
 			.id(review.getId())
 			.title(review.getTitle())
-			.keyword(review.getKeyword())
-			.activityType(review.getActivityType())
-			.activityPeriod(review.getActivityPeriod())
-			.activityEndDate(review.getActivityEndDate())
-			.activityName(review.getActivityName())
 			.content(review.getContent())
 			.imageUrls(review.getImageUrls())
 			.updatedAt(review.getUpdatedAt())
