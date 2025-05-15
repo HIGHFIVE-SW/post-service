@@ -1,5 +1,6 @@
 package com.trendist.post_service.domain.review.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewGetCountByType;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
@@ -120,6 +122,24 @@ public class ReviewController {
 	@GetMapping("/mine")
 	public ApiResponse<Page<ReviewGetMineResponse>> getMyReviews(@RequestParam(defaultValue = "0") int page) {
 		return ApiResponse.onSuccess(reviewService.getMyReviews(page));
+	}
+
+	@Operation(
+		summary = "활동 종류별 자신이 진행한 활동 통계 조회",
+		description = "활동 종유별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
+	)
+	@GetMapping("/mine/count")
+	public ApiResponse<List<ReviewGetCountByType>> countMyReviewsByType() {
+		return ApiResponse.onSuccess(reviewService.countMyReviewsByType());
+	}
+
+	@Operation(
+		summary = "활동 종류별 자신이 진행한 활동 통계 조회",
+		description = "활동 종유별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
+	)
+	@GetMapping("/{userId}/count")
+	public ApiResponse<List<ReviewGetCountByType>> countUserReviewsByType(@PathVariable(name = "userId") UUID userId) {
+		return ApiResponse.onSuccess(reviewService.countUserReviewsByType(userId));
 	}
 
 	@Operation(
