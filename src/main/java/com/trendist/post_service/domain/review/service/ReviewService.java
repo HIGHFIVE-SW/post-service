@@ -60,6 +60,7 @@ public class ReviewService {
 			.activityEndDate(reviewCreateRequest.activityEndDate())
 			.activityName(reviewCreateRequest.activityName())
 			.content(reviewCreateRequest.content())
+			.awardImageUrl(reviewCreateRequest.awardImageUrl())
 			.imageUrls(reviewCreateRequest.imageUrls())
 			.userId(userId)
 			.nickname(nickname)
@@ -87,6 +88,7 @@ public class ReviewService {
 
 		review.setTitle(reviewUpdateRequest.title());
 		review.setContent(reviewUpdateRequest.content());
+		review.setAwardImageUrl(reviewUpdateRequest.awardImageUrl());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 
 		reviewRepository.save(review);
@@ -118,19 +120,19 @@ public class ReviewService {
 	}
 
 	public Page<ReviewGetAllResponse> getAllReviewsByLikeCount(int page) {
-		Pageable pageable = PageRequest.of(page, 10);
+		Pageable pageable = PageRequest.of(page, 9);
 		return reviewRepository.findAllByDeletedFalseOrderByLikeCountDesc(pageable)
 			.map(ReviewGetAllResponse::from);
 	}
 
 	public Page<ReviewGetAllResponse> getAllReviewsByKeyword(Keyword keyword, int page) {
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
+		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
 		return reviewRepository.findAllByKeywordAndDeletedFalse(keyword, pageable)
 			.map(ReviewGetAllResponse::from);
 	}
 
 	public Page<ReviewGetAllResponse> getAllReviewsByActivityType(ActivityType activityType, int page) {
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
+		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
 		return reviewRepository.findAllByActivityTypeAndDeletedFalse(activityType, pageable)
 			.map(ReviewGetAllResponse::from);
 	}

@@ -70,6 +70,9 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "review_content")
 	private String content;
 
+	@Column(name = "award_image_url")
+	private String awardImageUrl;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "review_image_urls", joinColumns = @JoinColumn(name = "review_id"))
 	@Column(name = "image_urls")

@@ -2,6 +2,7 @@ package com.trendist.post_service.domain.review.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.trendist.post_service.domain.review.domain.ActivityPeriod;
@@ -20,6 +21,8 @@ public record ReviewGetResponse(
 	ActivityPeriod activityPeriod,
 	LocalDate activityEndDate,
 	String activityName,
+	String awardImageUrl,
+	List<String> imageUrls,
 	String content,
 	Integer likeCount,
 	UUID userId,
@@ -36,6 +39,8 @@ public record ReviewGetResponse(
 			.activityPeriod(review.getActivityPeriod())
 			.activityEndDate(review.getActivityEndDate())
 			.activityName(review.getActivityName())
+			.awardImageUrl(review.getAwardImageUrl())
+			.imageUrls(review.getImageUrls())
 			.content(review.getContent())
 			.likeCount(review.getLikeCount())
 			.userId(review.getUserId())

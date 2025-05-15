@@ -5,6 +5,7 @@ import java.util.List;
 public record ReviewUpdateRequest(
 	String title,
 	String content,
+	String awardImageUrl,
 	List<String> imageUrls
 ) {
 }
