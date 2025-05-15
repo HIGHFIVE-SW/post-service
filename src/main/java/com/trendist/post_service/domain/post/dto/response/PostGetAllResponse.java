@@ -14,7 +14,6 @@ public record PostGetAllResponse(
 	String nickname,
 	Integer likeCount,
 	LocalDateTime createdAt
-	//좋아요 수도 추가되어야함
 ) {
 	public static PostGetAllResponse from(Post post) {
 		return PostGetAllResponse.builder()

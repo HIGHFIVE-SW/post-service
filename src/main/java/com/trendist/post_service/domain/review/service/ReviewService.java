@@ -117,7 +117,7 @@ public class ReviewService {
 	}
 
 	public Page<ReviewGetAllResponse> getAllReviews(int page) {
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
+		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
 		return reviewRepository.findAllByDeletedFalse(pageable)
 			.map(ReviewGetAllResponse::from);
 	}

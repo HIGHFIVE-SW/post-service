@@ -17,7 +17,6 @@ public record PostGetResponse(
 	String nickname,
 	String profileUrl,
 	LocalDateTime createdAt
-	//좋아요, 댓글 추가되어야함
 ) {
 	public static PostGetResponse of(Post post, String profileUrl) {
 		return PostGetResponse.builder()
