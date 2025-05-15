@@ -8,13 +8,13 @@ import com.trendist.post_service.domain.review.domain.Review;
 import lombok.Builder;
 
 @Builder
-public record ReviewGetCountResponse(
+public record ReviewGetTypeCountResponse(
 	UUID userId,
 	ActivityType activityType,
 	Long count
 ) {
-	public static ReviewGetCountResponse of(Review review, Long count) {
-		return ReviewGetCountResponse.builder()
+	public static ReviewGetTypeCountResponse of(Review review, Long count) {
+		return ReviewGetTypeCountResponse.builder()
 			.userId(review.getUserId())
 			.activityType(review.getActivityType())
 			.count(count)

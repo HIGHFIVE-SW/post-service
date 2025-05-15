@@ -22,7 +22,8 @@ import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetCountResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
@@ -179,7 +180,7 @@ public class ReviewService {
 		return ReviewLikeResponse.of(reviewLike, like);
 	}
 
-	public List<ReviewGetCountResponse> countMyReviewsByType() {
+	public List<ReviewGetTypeCountResponse> countMyReviewsByType() {
 		UUID userId = userServiceClient.getMyProfile("").getResult().id();
 
 		Map<ActivityType, Long> counts = reviewRepository
@@ -188,7 +189,7 @@ public class ReviewService {
 			.collect(Collectors.groupingBy(Review::getActivityType, Collectors.counting()));
 
 		return Arrays.stream(ActivityType.values())
-			.map(type -> ReviewGetCountResponse.builder()
+			.map(type -> ReviewGetTypeCountResponse.builder()
 				.userId(userId)
 				.activityType(type)
 				.count(counts.getOrDefault(type, 0L))
@@ -197,17 +198,51 @@ public class ReviewService {
 			.toList();
 	}
 
-	public List<ReviewGetCountResponse> countUserReviewsByType(UUID userId) {
+	public List<ReviewGetTypeCountResponse> countUserReviewsByType(UUID userId) {
 		Map<ActivityType, Long> counts = reviewRepository
 			.findAllByUserIdAndDeletedFalse(userId)
 			.stream()
 			.collect(Collectors.groupingBy(Review::getActivityType, Collectors.counting()));
 
 		return Arrays.stream(ActivityType.values())
-			.map(type -> ReviewGetCountResponse.builder()
+			.map(type -> ReviewGetTypeCountResponse.builder()
 				.userId(userId)
 				.activityType(type)
 				.count(counts.getOrDefault(type, 0L))
+				.build()
+			)
+			.toList();
+	}
+
+	public List<ReviewGetKeywordCountResponse> countMyReviewsByKeyword() {
+		UUID userId = userServiceClient.getMyProfile("").getResult().id();
+
+		Map<Keyword, Long> counts = reviewRepository
+			.findAllByUserIdAndDeletedFalse(userId)
+			.stream()
+			.collect(Collectors.groupingBy(Review::getKeyword, Collectors.counting()));
+
+		return Arrays.stream(Keyword.values())
+			.map(keyword -> ReviewGetKeywordCountResponse.builder()
+				.userId(userId)
+				.keyword(keyword)
+				.count(counts.getOrDefault(keyword, 0L))
+				.build()
+			)
+			.toList();
+	}
+
+	public List<ReviewGetKeywordCountResponse> countUserReviewsByKeyword(UUID userId) {
+		Map<Keyword, Long> counts = reviewRepository
+			.findAllByUserIdAndDeletedFalse(userId)
+			.stream()
+			.collect(Collectors.groupingBy(Review::getKeyword, Collectors.counting()));
+
+		return Arrays.stream(Keyword.values())
+			.map(keyword -> ReviewGetKeywordCountResponse.builder()
+				.userId(userId)
+				.keyword(keyword)
+				.count(counts.getOrDefault(keyword, 0L))
 				.build()
 			)
 			.toList();
