@@ -8,13 +8,13 @@ import com.trendist.post_service.domain.post.domain.Post;
 import lombok.Builder;
 
 @Builder
-public record PostGetMineResponse(
+public record PostGetUserResponse(
 	UUID id,
 	String title,
 	LocalDateTime updatedAt
 ) {
-	public static PostGetMineResponse from(Post post) {
-		return PostGetMineResponse.builder()
+	public static PostGetUserResponse from(Post post) {
+		return PostGetUserResponse.builder()
 			.id(post.getId())
 			.title(post.getTitle())
 			.updatedAt(post.getUpdatedAt())
