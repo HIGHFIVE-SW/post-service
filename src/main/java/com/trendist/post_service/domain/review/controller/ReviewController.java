@@ -1,6 +1,5 @@
 package com.trendist.post_service.domain.review.controller;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -21,9 +20,6 @@ import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetUserResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
@@ -89,64 +85,6 @@ public class ReviewController {
 	@GetMapping("/{reviewId}")
 	public ApiResponse<ReviewGetResponse> getReview(@PathVariable(name = "reviewId") UUID reviewId) {
 		return ApiResponse.onSuccess(reviewService.getReview(reviewId));
-	}
-
-	@Operation(
-		summary = "내가 쓴 리뷰 게시판 게시물 조회",
-		description = "현재 로그인한 사용자가 리뷰 게시판에 자신이 생성한 게시물들을 조회합니다.(본인 프로필용)"
-	)
-	@GetMapping("/profile/mine")
-	public ApiResponse<Page<ReviewGetUserResponse>> getMyReviews(@RequestParam(defaultValue = "0") int page) {
-		return ApiResponse.onSuccess(reviewService.getMyReviews(page));
-	}
-
-	@Operation(
-		summary = " 특정 사용자가 쓴 리뷰 게시물 조회",
-		description = "특정 사용자가 리뷰 게시판에 본인이 생성한 게시물들을 조회합니다.(특정 사용자 프로필용)"
-	)
-	@GetMapping("/profile/{userId}")
-	public ApiResponse<Page<ReviewGetUserResponse>> getUserReviews(
-		@RequestParam(defaultValue = "0") int page,
-		@PathVariable(name = "userId") UUID userId) {
-		return ApiResponse.onSuccess(reviewService.getUserReviews(page, userId));
-	}
-
-	@Operation(
-		summary = "활동 종류별 자신이 진행한 활동 통계 조회",
-		description = "활동 종류별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
-	)
-	@GetMapping("/mine/type/count")
-	public ApiResponse<List<ReviewGetTypeCountResponse>> countMyReviewsByType() {
-		return ApiResponse.onSuccess(reviewService.countMyReviewsByType());
-	}
-
-	@Operation(
-		summary = "활동 종류별 특정 사용자가 진행한 활동 통계 조회",
-		description = "활동 종류별로 특정 사용자가 진행한 활동들이 총 몇개인지 통계를 조회합니다."
-	)
-	@GetMapping("/{userId}/type/count")
-	public ApiResponse<List<ReviewGetTypeCountResponse>> countUserReviewsByType(
-		@PathVariable(name = "userId") UUID userId) {
-		return ApiResponse.onSuccess(reviewService.countUserReviewsByType(userId));
-	}
-
-	@Operation(
-		summary = "키워드별 자신이 진행한 활동 통계 조회",
-		description = "키워드별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
-	)
-	@GetMapping("/mine/keyword/count")
-	public ApiResponse<List<ReviewGetKeywordCountResponse>> countMyReviewsByKeyword() {
-		return ApiResponse.onSuccess(reviewService.countMyReviewsByKeyword());
-	}
-
-	@Operation(
-		summary = "키워드별 특정 사용자가 진행한 활동 통계 조회",
-		description = "키워드별로 특정 사용자가 진행한 활동들이 총 몇개인지 통계를 조회합니다."
-	)
-	@GetMapping("/{userId}/keyword/count")
-	public ApiResponse<List<ReviewGetKeywordCountResponse>> countUserReviewsByKeyword(
-		@PathVariable(name = "userId") UUID userId) {
-		return ApiResponse.onSuccess(reviewService.countUserReviewsByKeyword(userId));
 	}
 
 	@Operation(
