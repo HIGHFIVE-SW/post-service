@@ -23,7 +23,7 @@ import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewGetUserResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
@@ -93,11 +93,22 @@ public class ReviewController {
 
 	@Operation(
 		summary = "내가 쓴 리뷰 게시판 게시물 조회",
-		description = "현재 로그인한 사용자가 리뷰 게시판에 자신이 생성한 게시물들을 조회합니다."
+		description = "현재 로그인한 사용자가 리뷰 게시판에 자신이 생성한 게시물들을 조회합니다.(본인 프로필용)"
 	)
-	@GetMapping("/mine")
-	public ApiResponse<Page<ReviewGetMineResponse>> getMyReviews(@RequestParam(defaultValue = "0") int page) {
+	@GetMapping("/profile/mine")
+	public ApiResponse<Page<ReviewGetUserResponse>> getMyReviews(@RequestParam(defaultValue = "0") int page) {
 		return ApiResponse.onSuccess(reviewService.getMyReviews(page));
+	}
+
+	@Operation(
+		summary = " 특정 사용자가 쓴 리뷰 게시물 조회",
+		description = "특정 사용자가 리뷰 게시판에 본인이 생성한 게시물들을 조회합니다.(특정 사용자 프로필용)"
+	)
+	@GetMapping("/profile/{userId}")
+	public ApiResponse<Page<ReviewGetUserResponse>> getUserReviews(
+		@RequestParam(defaultValue = "0") int page,
+		@PathVariable(name = "userId") UUID userId) {
+		return ApiResponse.onSuccess(reviewService.getUserReviews(page, userId));
 	}
 
 	@Operation(

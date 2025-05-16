@@ -25,7 +25,7 @@ import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewGetUserResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
@@ -151,12 +151,19 @@ public class ReviewService {
 		return ReviewGetResponse.of(review, profileUrl);
 	}
 
-	public Page<ReviewGetMineResponse> getMyReviews(int page) {
+	public Page<ReviewGetUserResponse> getMyReviews(int page) {
 		UUID userId = userServiceClient.getMyProfile("").getResult().id();
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("updatedAt").descending());
 
 		return reviewRepository.findByUserIdAndDeletedFalse(userId, pageable)
-			.map(ReviewGetMineResponse::from);
+			.map(ReviewGetUserResponse::from);
+	}
+
+	public Page<ReviewGetUserResponse> getUserReviews(int page, UUID userId) {
+		Pageable pageable = PageRequest.of(page, 10, Sort.by("updatedAt").descending());
+
+		return reviewRepository.findByUserIdAndDeletedFalse(userId, pageable)
+			.map(ReviewGetUserResponse::from);
 	}
 
 	@Transactional
