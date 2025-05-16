@@ -27,11 +27,13 @@ public enum ErrorStatus implements BaseErrorCode {
 	_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST_001", "해당 게시물이 존재하지 않습니다."),
 	_POST_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "POST_002", "게시물을 수정 요청이 거부되었습니다."),
 	_POST_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "POST_003", "게시물을 삭제 요청이 거부되었습니다."),
+	_POST_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "POST_004", "해당 게시물에 대한 좋아요가 존재하지 않습니다."),
 
 	_REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_001", "해당 게시물이 존재하지 않습니다."),
 	_REVIEW_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "REVIEW_002", "게시물을 수정 요청이 거부되었습니다."),
 	_REVIEW_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "REVIEW_003", "게시물을 삭제 요청이 거부되었습니다."),
 	_REVIEW_IMAGE_REQUIRED(HttpStatus.BAD_REQUEST, "REVIEW_004", "리뷰에는 최소 1개의 이미지를 첨부해야 합니다."),
+	_REVIEW_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_005", "해당 리뷰에 대한 좋아요가 존재하지 않습니다."),
 
 	_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT_001", "해당 댓글이 존재하지 않습니다."),
 	_COMMENT_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "COMMENT_002", "댓글 수정 요청이 거부되었습니다."),

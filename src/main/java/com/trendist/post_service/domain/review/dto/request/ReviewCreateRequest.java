@@ -18,6 +18,7 @@ public record ReviewCreateRequest(
 	LocalDate activityEndDate,
 	String activityName,
 	String content,
+	String awardImageUrl,
 	List<String> imageUrls
 ) {
 }

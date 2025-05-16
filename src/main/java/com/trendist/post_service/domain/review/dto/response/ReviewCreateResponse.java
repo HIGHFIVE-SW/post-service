@@ -23,6 +23,7 @@ public record ReviewCreateResponse(
 	LocalDate activityEndDate,
 	String activityName,
 	String content,
+	String awardImageUrl,
 	List<String> imageUrls,
 	Boolean deleted
 ) {
@@ -38,6 +39,7 @@ public record ReviewCreateResponse(
 			.activityEndDate(review.getActivityEndDate())
 			.activityName(review.getActivityName())
 			.content(review.getContent())
+			.awardImageUrl(review.getAwardImageUrl())
 			.imageUrls(review.getImageUrls())
 			.deleted(review.getDeleted())
 			.build();

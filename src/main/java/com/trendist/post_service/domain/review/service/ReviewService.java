@@ -1,6 +1,10 @@
 package com.trendist.post_service.domain.review.service;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trendist.post_service.domain.review.domain.ActivityType;
+import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.domain.review.domain.ReviewLike;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
@@ -16,6 +22,8 @@ import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
@@ -53,6 +61,7 @@ public class ReviewService {
 			.activityEndDate(reviewCreateRequest.activityEndDate())
 			.activityName(reviewCreateRequest.activityName())
 			.content(reviewCreateRequest.content())
+			.awardImageUrl(reviewCreateRequest.awardImageUrl())
 			.imageUrls(reviewCreateRequest.imageUrls())
 			.userId(userId)
 			.nickname(nickname)
@@ -79,12 +88,8 @@ public class ReviewService {
 		}
 
 		review.setTitle(reviewUpdateRequest.title());
-		review.setKeyword(reviewUpdateRequest.keyword());
-		review.setActivityType(reviewUpdateRequest.activityType());
-		review.setActivityPeriod(reviewUpdateRequest.activityPeriod());
-		review.setActivityEndDate(reviewUpdateRequest.activityEndDate());
-		review.setActivityName(reviewUpdateRequest.activityName());
 		review.setContent(reviewUpdateRequest.content());
+		review.setAwardImageUrl(reviewUpdateRequest.awardImageUrl());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 
 		reviewRepository.save(review);
@@ -110,8 +115,26 @@ public class ReviewService {
 	}
 
 	public Page<ReviewGetAllResponse> getAllReviews(int page) {
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
+		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
 		return reviewRepository.findAllByDeletedFalse(pageable)
+			.map(ReviewGetAllResponse::from);
+	}
+
+	public Page<ReviewGetAllResponse> getAllReviewsByLikeCount(int page) {
+		Pageable pageable = PageRequest.of(page, 9);
+		return reviewRepository.findAllByDeletedFalseOrderByLikeCountDesc(pageable)
+			.map(ReviewGetAllResponse::from);
+	}
+
+	public Page<ReviewGetAllResponse> getAllReviewsByKeyword(Keyword keyword, int page) {
+		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
+		return reviewRepository.findAllByKeywordAndDeletedFalse(keyword, pageable)
+			.map(ReviewGetAllResponse::from);
+	}
+
+	public Page<ReviewGetAllResponse> getAllReviewsByActivityType(ActivityType activityType, int page) {
+		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
+		return reviewRepository.findAllByActivityTypeAndDeletedFalse(activityType, pageable)
 			.map(ReviewGetAllResponse::from);
 	}
 
@@ -148,12 +171,62 @@ public class ReviewService {
 			like = true;
 		} else {
 			reviewLike = reviewLikeRepository.findByReviewIdAndUserId(reviewId, userId)
-				.orElseThrow(() -> new ApiException(ErrorStatus._REVIEW_NOT_FOUND));//errorStatus 바꿔야함.
+				.orElseThrow(() -> new ApiException(ErrorStatus._REVIEW_LIKE_NOT_FOUND));
 			reviewLikeRepository.deleteByReviewIdAndUserId(reviewId, userId);
 			reviewRepository.decrementLikeCount(reviewId);
 			like = false;
 		}
 
 		return ReviewLikeResponse.of(reviewLike, like);
+	}
+
+	public List<ReviewGetTypeCountResponse> countMyReviewsByType() {
+		UUID userId = userServiceClient.getMyProfile("").getResult().id();
+
+		return countByType(userId);
+	}
+
+	public List<ReviewGetTypeCountResponse> countUserReviewsByType(UUID userId) {
+		return countByType(userId);
+	}
+
+	public List<ReviewGetKeywordCountResponse> countMyReviewsByKeyword() {
+		UUID userId = userServiceClient.getMyProfile("").getResult().id();
+
+		return countByKeyword(userId);
+	}
+
+	public List<ReviewGetKeywordCountResponse> countUserReviewsByKeyword(UUID userId) {
+		return countByKeyword(userId);
+	}
+
+	private List<ReviewGetTypeCountResponse> countByType(UUID userId) {
+		Map<ActivityType, Long> counts = reviewRepository.findAllByUserIdAndDeletedFalse(userId)
+			.stream()
+			.collect(Collectors.groupingBy(Review::getActivityType, Collectors.counting()));
+
+		return Arrays.stream(ActivityType.values())
+			.map(type -> ReviewGetTypeCountResponse.builder()
+				.userId(userId)
+				.activityType(type)
+				.count(counts.getOrDefault(type, 0L))
+				.build()
+			)
+			.toList();
+	}
+
+	private List<ReviewGetKeywordCountResponse> countByKeyword(UUID userId) {
+		Map<Keyword, Long> counts = reviewRepository.findAllByUserIdAndDeletedFalse(userId)
+			.stream()
+			.collect(Collectors.groupingBy(Review::getKeyword, Collectors.counting()));
+
+		return Arrays.stream(Keyword.values())
+			.map(keyword -> ReviewGetKeywordCountResponse.builder()
+				.userId(userId)
+				.keyword(keyword)
+				.count(counts.getOrDefault(keyword, 0L))
+				.build()
+			)
+			.toList();
 	}
 }
