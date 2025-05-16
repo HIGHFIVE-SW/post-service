@@ -1,0 +1,30 @@
+package com.trendist.post_service.domain.post.controller;
+
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.trendist.post_service.domain.post.dto.response.PostGetMineResponse;
+import com.trendist.post_service.domain.post.service.PostProfileService;
+import com.trendist.post_service.global.response.ApiResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/profile")
+public class PostProfileController {
+	private final PostProfileService postProfileService;
+
+	@Operation(
+		summary = "내가 쓴 자유 게시판 게시물 조회",
+		description = "현재 로그인한 사용자가 자유 게시판에 자신이 생성한 게시물들을 조회합니다."
+	)
+	@GetMapping("/posts/mine")
+	public ApiResponse<Page<PostGetMineResponse>> getMyPosts(@RequestParam(defaultValue = "0") int page) {
+		return ApiResponse.onSuccess(postProfileService.getMyPosts(page));
+	}
+}
