@@ -1,10 +1,6 @@
 package com.trendist.post_service.domain.review.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,9 +19,6 @@ import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetUserResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
@@ -151,21 +144,6 @@ public class ReviewService {
 		return ReviewGetResponse.of(review, profileUrl);
 	}
 
-	public Page<ReviewGetUserResponse> getMyReviews(int page) {
-		UUID userId = userServiceClient.getMyProfile("").getResult().id();
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("updatedAt").descending());
-
-		return reviewRepository.findByUserIdAndDeletedFalse(userId, pageable)
-			.map(ReviewGetUserResponse::from);
-	}
-
-	public Page<ReviewGetUserResponse> getUserReviews(int page, UUID userId) {
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("updatedAt").descending());
-
-		return reviewRepository.findByUserIdAndDeletedFalse(userId, pageable)
-			.map(ReviewGetUserResponse::from);
-	}
-
 	@Transactional
 	public ReviewLikeResponse likeReview(UUID reviewId) {
 		UUID userId = userServiceClient.getMyProfile("").getResult().id();
@@ -190,55 +168,5 @@ public class ReviewService {
 		}
 
 		return ReviewLikeResponse.of(reviewLike, like);
-	}
-
-	public List<ReviewGetTypeCountResponse> countMyReviewsByType() {
-		UUID userId = userServiceClient.getMyProfile("").getResult().id();
-
-		return countByType(userId);
-	}
-
-	public List<ReviewGetTypeCountResponse> countUserReviewsByType(UUID userId) {
-		return countByType(userId);
-	}
-
-	public List<ReviewGetKeywordCountResponse> countMyReviewsByKeyword() {
-		UUID userId = userServiceClient.getMyProfile("").getResult().id();
-
-		return countByKeyword(userId);
-	}
-
-	public List<ReviewGetKeywordCountResponse> countUserReviewsByKeyword(UUID userId) {
-		return countByKeyword(userId);
-	}
-
-	private List<ReviewGetTypeCountResponse> countByType(UUID userId) {
-		Map<ActivityType, Long> counts = reviewRepository.findAllByUserIdAndDeletedFalse(userId)
-			.stream()
-			.collect(Collectors.groupingBy(Review::getActivityType, Collectors.counting()));
-
-		return Arrays.stream(ActivityType.values())
-			.map(type -> ReviewGetTypeCountResponse.builder()
-				.userId(userId)
-				.activityType(type)
-				.count(counts.getOrDefault(type, 0L))
-				.build()
-			)
-			.toList();
-	}
-
-	private List<ReviewGetKeywordCountResponse> countByKeyword(UUID userId) {
-		Map<Keyword, Long> counts = reviewRepository.findAllByUserIdAndDeletedFalse(userId)
-			.stream()
-			.collect(Collectors.groupingBy(Review::getKeyword, Collectors.counting()));
-
-		return Arrays.stream(Keyword.values())
-			.map(keyword -> ReviewGetKeywordCountResponse.builder()
-				.userId(userId)
-				.keyword(keyword)
-				.count(counts.getOrDefault(keyword, 0L))
-				.build()
-			)
-			.toList();
 	}
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetUserResponse;
-import com.trendist.post_service.domain.review.service.ReviewService;
+import com.trendist.post_service.domain.review.service.ReviewProfileService;
 import com.trendist.post_service.global.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/profile")
 public class ReviewProfileController {
-	private final ReviewService reviewService;
+	private final ReviewProfileService reviewProfileService;
 
 	@Operation(
 		summary = "내가 쓴 리뷰 게시판 게시물 조회",
@@ -31,7 +31,7 @@ public class ReviewProfileController {
 	)
 	@GetMapping("/mine")
 	public ApiResponse<Page<ReviewGetUserResponse>> getMyReviews(@RequestParam(defaultValue = "0") int page) {
-		return ApiResponse.onSuccess(reviewService.getMyReviews(page));
+		return ApiResponse.onSuccess(reviewProfileService.getMyReviews(page));
 	}
 
 	@Operation(
@@ -42,7 +42,7 @@ public class ReviewProfileController {
 	public ApiResponse<Page<ReviewGetUserResponse>> getUserReviews(
 		@RequestParam(defaultValue = "0") int page,
 		@PathVariable(name = "userId") UUID userId) {
-		return ApiResponse.onSuccess(reviewService.getUserReviews(page, userId));
+		return ApiResponse.onSuccess(reviewProfileService.getUserReviews(page, userId));
 	}
 
 	@Operation(
@@ -51,7 +51,7 @@ public class ReviewProfileController {
 	)
 	@GetMapping("/mine/type/count")
 	public ApiResponse<List<ReviewGetTypeCountResponse>> countMyReviewsByType() {
-		return ApiResponse.onSuccess(reviewService.countMyReviewsByType());
+		return ApiResponse.onSuccess(reviewProfileService.countMyReviewsByType());
 	}
 
 	@Operation(
@@ -61,7 +61,7 @@ public class ReviewProfileController {
 	@GetMapping("/{userId}/type/count")
 	public ApiResponse<List<ReviewGetTypeCountResponse>> countUserReviewsByType(
 		@PathVariable(name = "userId") UUID userId) {
-		return ApiResponse.onSuccess(reviewService.countUserReviewsByType(userId));
+		return ApiResponse.onSuccess(reviewProfileService.countUserReviewsByType(userId));
 	}
 
 	@Operation(
@@ -70,7 +70,7 @@ public class ReviewProfileController {
 	)
 	@GetMapping("/mine/keyword/count")
 	public ApiResponse<List<ReviewGetKeywordCountResponse>> countMyReviewsByKeyword() {
-		return ApiResponse.onSuccess(reviewService.countMyReviewsByKeyword());
+		return ApiResponse.onSuccess(reviewProfileService.countMyReviewsByKeyword());
 	}
 
 	@Operation(
@@ -80,6 +80,6 @@ public class ReviewProfileController {
 	@GetMapping("/{userId}/keyword/count")
 	public ApiResponse<List<ReviewGetKeywordCountResponse>> countUserReviewsByKeyword(
 		@PathVariable(name = "userId") UUID userId) {
-		return ApiResponse.onSuccess(reviewService.countUserReviewsByKeyword(userId));
+		return ApiResponse.onSuccess(reviewProfileService.countUserReviewsByKeyword(userId));
 	}
 }
