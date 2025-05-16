@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
+import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
@@ -68,43 +69,17 @@ public class ReviewController {
 	}
 
 	@Operation(
-		summary = "리뷰 게시판 전체 게시물 조회",
-		description = "리뷰 게시판에 전체 게시물을 조회합니다."
+		summary = "리뷰 게시판 조회",
+		description = "리뷰 게시판의 게시물을 특정 조건에 따라 조회합니다."
 	)
 	@GetMapping
-	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviews(@RequestParam(defaultValue = "0") int page) {
-		return ApiResponse.onSuccess(reviewService.getAllReviews(page));
-	}
-
-	@Operation(
-		summary = "리뷰 게시판 전체 게시물 좋아요순 조회",
-		description = "리뷰 게시판에 전체 게시물을 좋아요순으로 조회합니다."
-	)
-	@GetMapping("/like")
-	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviewsByLikeCunt(@RequestParam(defaultValue = "0") int page) {
-		return ApiResponse.onSuccess(reviewService.getAllReviewsByLikeCount(page));
-	}
-
-	@Operation(
-		summary = "리뷰 게시판 특정 키워드별 조회",
-		description = "리뷰 게시판 특정 키워드에 해당하는 리뷰를 조회합니다."
-	)
-	@GetMapping("/keyword/{keyword}")
-	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviewsByKeyword(
+	public ApiResponse<Page<ReviewGetAllResponse>> getReviews(
 		@RequestParam(defaultValue = "0") int page,
-		@PathVariable(name = "keyword") Keyword keyword) {
-		return ApiResponse.onSuccess(reviewService.getAllReviewsByKeyword(keyword, page));
-	}
-
-	@Operation(
-		summary = "리뷰 게시판 특정 활동 종류별 조회",
-		description = "리뷰 게시판 특정 종류에 해당하는 리뷰를 조회합니다."
-	)
-	@GetMapping("/type/{activityType}")
-	public ApiResponse<Page<ReviewGetAllResponse>> getAllReviewsByActivityType(
-		@RequestParam(defaultValue = "0") int page,
-		@PathVariable(name = "activityType") ActivityType activityType) {
-		return ApiResponse.onSuccess(reviewService.getAllReviewsByActivityType(activityType, page));
+		@RequestParam(required = false) Keyword keyword,
+		@RequestParam(required = false) ActivityType activityType,
+		@RequestParam(name = "sort", defaultValue = "RECENT") ReviewSort sort
+	) {
+		return ApiResponse.onSuccess(reviewService.getReviews(keyword, activityType, sort, page));
 	}
 
 	@Operation(

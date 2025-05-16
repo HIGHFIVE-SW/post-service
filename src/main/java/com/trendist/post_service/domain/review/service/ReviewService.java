@@ -17,6 +17,7 @@ import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.domain.review.domain.ReviewLike;
+import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
@@ -114,28 +115,32 @@ public class ReviewService {
 		return ReviewDeleteResponse.from(review);
 	}
 
-	public Page<ReviewGetAllResponse> getAllReviews(int page) {
-		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
-		return reviewRepository.findAllByDeletedFalse(pageable)
-			.map(ReviewGetAllResponse::from);
-	}
+	public Page<ReviewGetAllResponse> getReviews(
+		Keyword keyword,
+		ActivityType activityType,
+		ReviewSort reviewSort,
+		int page) {
+		Sort sort = switch (reviewSort) {
+			case LIKES -> Sort.by("likeCount").descending();
+			case RECENT -> Sort.by("createdAt").descending();
+		};
 
-	public Page<ReviewGetAllResponse> getAllReviewsByLikeCount(int page) {
-		Pageable pageable = PageRequest.of(page, 9);
-		return reviewRepository.findAllByDeletedFalseOrderByLikeCountDesc(pageable)
-			.map(ReviewGetAllResponse::from);
-	}
+		Pageable pageable = PageRequest.of(page, 9, sort);
 
-	public Page<ReviewGetAllResponse> getAllReviewsByKeyword(Keyword keyword, int page) {
-		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
-		return reviewRepository.findAllByKeywordAndDeletedFalse(keyword, pageable)
-			.map(ReviewGetAllResponse::from);
-	}
-
-	public Page<ReviewGetAllResponse> getAllReviewsByActivityType(ActivityType activityType, int page) {
-		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
-		return reviewRepository.findAllByActivityTypeAndDeletedFalse(activityType, pageable)
-			.map(ReviewGetAllResponse::from);
+		if (keyword != null && activityType != null) {
+			return reviewRepository.findAllByKeywordAndActivityTypeAndDeletedFalse(keyword, activityType, pageable)
+				.map(ReviewGetAllResponse::from);
+		} else if (keyword != null) {
+			return reviewRepository.findAllByKeywordAndDeletedFalse(keyword, pageable)
+				.map(ReviewGetAllResponse::from);
+		} else if (activityType != null) {
+			return reviewRepository.findAllByActivityTypeAndDeletedFalse(activityType, pageable)
+				.map(ReviewGetAllResponse::from);
+		} else {
+			return reviewRepository
+				.findAllByDeletedFalse(pageable)
+				.map(ReviewGetAllResponse::from);
+		}
 	}
 
 	public ReviewGetResponse getReview(UUID reviewId) {
