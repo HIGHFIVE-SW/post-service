@@ -22,11 +22,14 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
 	Page<Review> findByUserIdAndDeletedFalse(UUID id, Pageable pageable);
 
-	Page<Review> findAllByDeletedFalseOrderByLikeCountDesc(Pageable pageable);
-
 	Page<Review> findAllByKeywordAndDeletedFalse(Keyword keyword, Pageable pageable);
 
 	Page<Review> findAllByActivityTypeAndDeletedFalse(ActivityType activityType, Pageable pageable);
+
+	Page<Review> findAllByKeywordAndActivityTypeAndDeletedFalse(
+		Keyword keyword,
+		ActivityType activityType,
+		Pageable pageable);
 
 	List<Review> findAllByUserIdAndDeletedFalse(UUID userId);
 

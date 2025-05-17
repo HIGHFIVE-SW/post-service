@@ -1,10 +1,6 @@
 package com.trendist.post_service.domain.review.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,14 +13,12 @@ import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.domain.review.domain.ReviewLike;
+import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
-import com.trendist.post_service.domain.review.dto.response.ReviewGetMineResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
@@ -114,28 +108,32 @@ public class ReviewService {
 		return ReviewDeleteResponse.from(review);
 	}
 
-	public Page<ReviewGetAllResponse> getAllReviews(int page) {
-		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
-		return reviewRepository.findAllByDeletedFalse(pageable)
-			.map(ReviewGetAllResponse::from);
-	}
+	public Page<ReviewGetAllResponse> getReviews(
+		Keyword keyword,
+		ActivityType activityType,
+		ReviewSort reviewSort,
+		int page) {
+		Sort sort = switch (reviewSort) {
+			case LIKES -> Sort.by("likeCount").descending();
+			case RECENT -> Sort.by("createdAt").descending();
+		};
 
-	public Page<ReviewGetAllResponse> getAllReviewsByLikeCount(int page) {
-		Pageable pageable = PageRequest.of(page, 9);
-		return reviewRepository.findAllByDeletedFalseOrderByLikeCountDesc(pageable)
-			.map(ReviewGetAllResponse::from);
-	}
+		Pageable pageable = PageRequest.of(page, 9, sort);
 
-	public Page<ReviewGetAllResponse> getAllReviewsByKeyword(Keyword keyword, int page) {
-		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
-		return reviewRepository.findAllByKeywordAndDeletedFalse(keyword, pageable)
-			.map(ReviewGetAllResponse::from);
-	}
-
-	public Page<ReviewGetAllResponse> getAllReviewsByActivityType(ActivityType activityType, int page) {
-		Pageable pageable = PageRequest.of(page, 9, Sort.by("createdAt").descending());
-		return reviewRepository.findAllByActivityTypeAndDeletedFalse(activityType, pageable)
-			.map(ReviewGetAllResponse::from);
+		if (keyword != null && activityType != null) {
+			return reviewRepository.findAllByKeywordAndActivityTypeAndDeletedFalse(keyword, activityType, pageable)
+				.map(ReviewGetAllResponse::from);
+		} else if (keyword != null) {
+			return reviewRepository.findAllByKeywordAndDeletedFalse(keyword, pageable)
+				.map(ReviewGetAllResponse::from);
+		} else if (activityType != null) {
+			return reviewRepository.findAllByActivityTypeAndDeletedFalse(activityType, pageable)
+				.map(ReviewGetAllResponse::from);
+		} else {
+			return reviewRepository
+				.findAllByDeletedFalse(pageable)
+				.map(ReviewGetAllResponse::from);
+		}
 	}
 
 	public ReviewGetResponse getReview(UUID reviewId) {
@@ -144,14 +142,6 @@ public class ReviewService {
 		String profileUrl = userServiceClient.getUserProfile(review.getUserId()).getResult().profileUrl();
 
 		return ReviewGetResponse.of(review, profileUrl);
-	}
-
-	public Page<ReviewGetMineResponse> getMyReviews(int page) {
-		UUID userId = userServiceClient.getMyProfile("").getResult().id();
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("updatedAt").descending());
-
-		return reviewRepository.findByUserIdAndDeletedFalse(userId, pageable)
-			.map(ReviewGetMineResponse::from);
 	}
 
 	@Transactional
@@ -178,55 +168,5 @@ public class ReviewService {
 		}
 
 		return ReviewLikeResponse.of(reviewLike, like);
-	}
-
-	public List<ReviewGetTypeCountResponse> countMyReviewsByType() {
-		UUID userId = userServiceClient.getMyProfile("").getResult().id();
-
-		return countByType(userId);
-	}
-
-	public List<ReviewGetTypeCountResponse> countUserReviewsByType(UUID userId) {
-		return countByType(userId);
-	}
-
-	public List<ReviewGetKeywordCountResponse> countMyReviewsByKeyword() {
-		UUID userId = userServiceClient.getMyProfile("").getResult().id();
-
-		return countByKeyword(userId);
-	}
-
-	public List<ReviewGetKeywordCountResponse> countUserReviewsByKeyword(UUID userId) {
-		return countByKeyword(userId);
-	}
-
-	private List<ReviewGetTypeCountResponse> countByType(UUID userId) {
-		Map<ActivityType, Long> counts = reviewRepository.findAllByUserIdAndDeletedFalse(userId)
-			.stream()
-			.collect(Collectors.groupingBy(Review::getActivityType, Collectors.counting()));
-
-		return Arrays.stream(ActivityType.values())
-			.map(type -> ReviewGetTypeCountResponse.builder()
-				.userId(userId)
-				.activityType(type)
-				.count(counts.getOrDefault(type, 0L))
-				.build()
-			)
-			.toList();
-	}
-
-	private List<ReviewGetKeywordCountResponse> countByKeyword(UUID userId) {
-		Map<Keyword, Long> counts = reviewRepository.findAllByUserIdAndDeletedFalse(userId)
-			.stream()
-			.collect(Collectors.groupingBy(Review::getKeyword, Collectors.counting()));
-
-		return Arrays.stream(Keyword.values())
-			.map(keyword -> ReviewGetKeywordCountResponse.builder()
-				.userId(userId)
-				.keyword(keyword)
-				.count(counts.getOrDefault(keyword, 0L))
-				.build()
-			)
-			.toList();
 	}
 }

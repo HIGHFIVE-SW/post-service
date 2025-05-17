@@ -12,7 +12,6 @@ import com.trendist.post_service.domain.post.domain.PostLike;
 import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
 import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
-import com.trendist.post_service.domain.post.dto.response.PostGetMineResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
 import com.trendist.post_service.domain.post.dto.response.PostLikeResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
@@ -107,14 +106,6 @@ public class PostService {
 		String profileUrl = userServiceClient.getUserProfile(post.getUserId()).getResult().profileUrl();
 
 		return PostGetResponse.of(post, profileUrl);
-	}
-
-	public Page<PostGetMineResponse> getMyPosts(int page) {
-		UUID userId = userServiceClient.getMyProfile("").getResult().id();
-		Pageable pageable = PageRequest.of(page, 10, Sort.by("updatedAt").descending());
-
-		return postRepository.findByUserIdAndDeletedFalse(userId, pageable)
-			.map(PostGetMineResponse::from);
 	}
 
 	@Transactional
