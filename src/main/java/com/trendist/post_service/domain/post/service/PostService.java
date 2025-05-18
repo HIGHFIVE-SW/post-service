@@ -20,7 +20,7 @@ import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
 import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
-import com.trendist.post_service.domain.post.dto.response.PostGetSearchResponse;
+import com.trendist.post_service.domain.post.dto.response.PostSearchResponse;
 import com.trendist.post_service.domain.post.dto.response.PostLikeResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
 import com.trendist.post_service.domain.post.repository.PostLikeRepository;
@@ -143,7 +143,7 @@ public class PostService {
 		return PostLikeResponse.of(postLike, like);
 	}
 
-	public Page<PostGetSearchResponse> searchPosts(String keyword, int page) {
+	public Page<PostSearchResponse> searchPosts(String keyword, int page) {
 		Pageable pageable = PageRequest.of(page, 10);
 
 		NativeQuery query = NativeQuery.builder()
@@ -164,9 +164,9 @@ public class PostService {
 		// 3) 검색 실행
 		SearchHits<PostDocument> hits = esOps.search(query, PostDocument.class);
 
-		List<PostGetSearchResponse> content = hits.getSearchHits().stream()
+		List<PostSearchResponse> content = hits.getSearchHits().stream()
 			.map(SearchHit::getContent)
-			.map(PostGetSearchResponse::from)
+			.map(PostSearchResponse::from)
 			.toList();
 
 		return new PageImpl<>(content, pageable, hits.getTotalHits());

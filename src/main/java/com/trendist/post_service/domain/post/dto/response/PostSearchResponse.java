@@ -9,19 +9,19 @@ import com.trendist.post_service.domain.post.domain.PostDocument;
 import lombok.Builder;
 
 @Builder
-public record PostGetSearchResponse(
+public record PostSearchResponse(
 	UUID id,
 	String title,
 	String nickname,
 	Integer likeCount,
 	String createdAt
 ) {
-	public static PostGetSearchResponse from(PostDocument postDocument) {
+	public static PostSearchResponse from(PostDocument postDocument) {
 		byte[] bytes = Base64.getDecoder().decode(postDocument.getId());
 		ByteBuffer bb = ByteBuffer.wrap(bytes);
 		UUID uuid = new UUID(bb.getLong(), bb.getLong());
 
-		return PostGetSearchResponse.builder()
+		return PostSearchResponse.builder()
 			.id(uuid)
 			.title(postDocument.getTitle())
 			.nickname(postDocument.getNickname())

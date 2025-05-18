@@ -16,7 +16,7 @@ import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
 import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
-import com.trendist.post_service.domain.post.dto.response.PostGetSearchResponse;
+import com.trendist.post_service.domain.post.dto.response.PostSearchResponse;
 import com.trendist.post_service.domain.post.dto.response.PostLikeResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
 import com.trendist.post_service.global.response.ApiResponse;
@@ -103,7 +103,7 @@ public class PostController {
 		description = "사용자가 자유 게시판에 특정 단어를 입력하여 해당하는 게시물을 검색합니다"
 	)
 	@GetMapping("/search")
-	public ApiResponse<Page<PostGetSearchResponse>> searchPosts(
+	public ApiResponse<Page<PostSearchResponse>> searchPosts(
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "0") int page
 	) {
