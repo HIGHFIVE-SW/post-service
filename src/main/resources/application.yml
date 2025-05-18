@@ -16,7 +16,7 @@ spring:
             read-timeout: 5000
   datasource:
     url: ${DB_URL}
-    username: root
+    username: admin
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
