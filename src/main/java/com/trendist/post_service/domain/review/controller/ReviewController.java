@@ -22,6 +22,7 @@ import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewSearchResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
 import com.trendist.post_service.domain.review.service.ReviewService;
 import com.trendist.post_service.global.response.ApiResponse;
@@ -94,5 +95,17 @@ public class ReviewController {
 	@PostMapping("/{reviewId}/like")
 	public ApiResponse<ReviewLikeResponse> likeReview(@PathVariable(name = "reviewId") UUID reviewId) {
 		return ApiResponse.onSuccess(reviewService.likeReview(reviewId));
+	}
+
+	@Operation(
+		summary = "리뷰 게시판 검색",
+		description = "사용자가 리뷰 게시판에 특정 단어를 입력하여 해당하는 리뷰를 검색합니다"
+	)
+	@GetMapping("/search")
+	public ApiResponse<Page<ReviewSearchResponse>> searchReviews(
+		@RequestParam String keyword,
+		@RequestParam(defaultValue = "0") int page
+	) {
+		return ApiResponse.onSuccess(reviewService.searchReviews(keyword, page));
 	}
 }
