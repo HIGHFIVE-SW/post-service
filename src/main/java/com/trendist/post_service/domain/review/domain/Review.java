@@ -38,6 +38,9 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "user_id", nullable = false)
 	private UUID userId;
 
+	@Column(name = "activity_id")
+	private UUID activityId;
+
 	@Column(name = "nickname")
 	private String nickname;
 

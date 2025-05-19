@@ -25,6 +25,7 @@ import com.trendist.post_service.domain.review.domain.ReviewDocument;
 import com.trendist.post_service.domain.review.domain.ReviewImageDocument;
 import com.trendist.post_service.domain.review.domain.ReviewLike;
 import com.trendist.post_service.domain.review.domain.ReviewSort;
+import com.trendist.post_service.domain.review.dto.request.ReviewActivityCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
@@ -37,6 +38,8 @@ import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse
 import com.trendist.post_service.domain.review.repository.ReviewLikeRepository;
 import com.trendist.post_service.domain.review.repository.ReviewRepository;
 import com.trendist.post_service.global.exception.ApiException;
+import com.trendist.post_service.global.feign.activity.client.ActivityServiceClient;
+import com.trendist.post_service.global.feign.activity.dto.ActivityGetResponse;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
 import com.trendist.post_service.global.response.status.ErrorStatus;
 
@@ -51,6 +54,7 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final ReviewLikeRepository reviewLikeRepository;
 	private final UserServiceClient userServiceClient;
+	private final ActivityServiceClient activityServiceClient;
 	private final ElasticsearchOperations esOps;
 
 	@Transactional
@@ -73,6 +77,40 @@ public class ReviewService {
 			.content(reviewCreateRequest.content())
 			.awardImageUrl(reviewCreateRequest.awardImageUrl())
 			.imageUrls(reviewCreateRequest.imageUrls())
+			.userId(userId)
+			.nickname(nickname)
+			.build();
+
+		reviewRepository.save(review);
+
+		return ReviewCreateResponse.from(review);
+	}
+
+	@Transactional
+	public ReviewCreateResponse createActivityReview(
+		UUID activityId,
+		ReviewActivityCreateRequest request
+	) {
+		if (request.imageUrls() == null || request.imageUrls().isEmpty()) {
+			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
+		}
+
+		UUID userId = userServiceClient.getMyProfile("").getResult().id();
+		String nickname = userServiceClient.getMyProfile("").getResult().nickname();
+
+		ActivityGetResponse activity = activityServiceClient.getActivity(activityId).getResult();
+
+		Review review = Review.builder()
+			.activityId(activityId)
+			.title(request.title())
+			.keyword(activity.keyword())
+			.activityType(activity.activityType())
+			.activityPeriod(request.activityPeriod())
+			.activityEndDate(activity.endDate().toLocalDate())
+			.activityName(activity.name())
+			.content(request.content())
+			.awardImageUrl(request.awardImageUrl())
+			.imageUrls(request.imageUrls())
 			.userId(userId)
 			.nickname(nickname)
 			.build();
