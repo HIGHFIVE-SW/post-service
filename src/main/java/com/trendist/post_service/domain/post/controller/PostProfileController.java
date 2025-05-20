@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/profile")
+@RequestMapping("/profile/posts")
 public class PostProfileController {
 	private final PostProfileService postProfileService;
 
@@ -26,7 +26,7 @@ public class PostProfileController {
 		summary = "내가 쓴 자유 게시판 게시물 조회",
 		description = "현재 로그인한 사용자가 자유 게시판에 자신이 생성한 게시물들을 조회합니다."
 	)
-	@GetMapping("/posts/mine")
+	@GetMapping("/mine")
 	public ApiResponse<Page<PostGetUserResponse>> getMyPosts(@RequestParam(defaultValue = "0") int page) {
 		return ApiResponse.onSuccess(postProfileService.getMyPosts(page));
 	}
@@ -35,7 +35,7 @@ public class PostProfileController {
 		summary = "특정 사용자가 쓴 자유 게시판 게시물 조회",
 		description = "특정 사용자가 자유 게시판에 본인이 생성한 게시물들을 조회합니다."
 	)
-	@GetMapping("/posts/{userId}")
+	@GetMapping("/{userId}")
 	public ApiResponse<Page<PostGetUserResponse>> getUserPosts(
 		@RequestParam(defaultValue = "0") int page,
 		@PathVariable(name = "userId") UUID userId) {

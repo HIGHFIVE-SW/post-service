@@ -14,6 +14,7 @@ import lombok.Builder;
 @Builder
 public record ReviewCreateResponse(
 	UUID id,
+	UUID activityId,
 	String title,
 	UUID userId,
 	String nickname,
@@ -30,6 +31,7 @@ public record ReviewCreateResponse(
 	public static ReviewCreateResponse from(Review review) {
 		return ReviewCreateResponse.builder()
 			.id(review.getId())
+			.activityId(review.getActivityId())
 			.title(review.getTitle())
 			.userId(review.getUserId())
 			.nickname(review.getNickname())

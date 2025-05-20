@@ -16,7 +16,7 @@ spring:
             read-timeout: 5000
   datasource:
     url: ${DB_URL}
-    username: root
+    username: admin
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
@@ -32,6 +32,9 @@ spring:
   sql:
     init:
       mode: always
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 1000
 
 server-uri: http://localhost:8081
 
@@ -50,4 +53,3 @@ aws:
     secretKey: ${S3_SECRET_KEY}
     bucketName: ${S3_BUCKET}
     region: ap-northeast-2
-    prefix: posts

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.domain.ReviewSort;
+import com.trendist.post_service.domain.review.dto.request.ReviewActivityCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
@@ -22,6 +23,7 @@ import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewLikeResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewSearchResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewUpdateResponse;
 import com.trendist.post_service.domain.review.service.ReviewService;
 import com.trendist.post_service.global.response.ApiResponse;
@@ -42,6 +44,18 @@ public class ReviewController {
 	@PostMapping
 	public ApiResponse<ReviewCreateResponse> createReview(@RequestBody ReviewCreateRequest reviewCreateRequest) {
 		return ApiResponse.onSuccess(reviewService.createReview(reviewCreateRequest));
+	}
+
+	@Operation(
+		summary = "특정 활동 리뷰 생성",
+		description = "사용자가 특정 활동에 대한 리뷰 게시판에 게시불을 생성합니다."
+	)
+	@PostMapping("{activityId}")
+	public ApiResponse<ReviewCreateResponse> createActivityReview(
+		@PathVariable(name = "activityId") UUID activityId,
+		@RequestBody ReviewActivityCreateRequest request
+	) {
+		return ApiResponse.onSuccess(reviewService.createActivityReview(activityId, request));
 	}
 
 	@Operation(
@@ -94,5 +108,17 @@ public class ReviewController {
 	@PostMapping("/{reviewId}/like")
 	public ApiResponse<ReviewLikeResponse> likeReview(@PathVariable(name = "reviewId") UUID reviewId) {
 		return ApiResponse.onSuccess(reviewService.likeReview(reviewId));
+	}
+
+	@Operation(
+		summary = "리뷰 게시판 검색",
+		description = "사용자가 리뷰 게시판에 특정 단어를 입력하여 해당하는 리뷰를 검색합니다"
+	)
+	@GetMapping("/search")
+	public ApiResponse<Page<ReviewSearchResponse>> searchReviews(
+		@RequestParam String keyword,
+		@RequestParam(defaultValue = "0") int page
+	) {
+		return ApiResponse.onSuccess(reviewService.searchReviews(keyword, page));
 	}
 }

@@ -1,18 +1,26 @@
 package com.trendist.post_service.domain.post.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
+import com.trendist.post_service.domain.post.domain.PostDocument;
 import com.trendist.post_service.domain.post.domain.PostLike;
 import com.trendist.post_service.domain.post.dto.request.PostUpdateRequest;
 import com.trendist.post_service.domain.post.dto.response.PostDeleteResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetAllResponse;
 import com.trendist.post_service.domain.post.dto.response.PostGetResponse;
+import com.trendist.post_service.domain.post.dto.response.PostSearchResponse;
 import com.trendist.post_service.domain.post.dto.response.PostLikeResponse;
 import com.trendist.post_service.domain.post.dto.response.PostUpdateResponse;
 import com.trendist.post_service.domain.post.repository.PostLikeRepository;
@@ -24,6 +32,7 @@ import com.trendist.post_service.domain.post.dto.response.PostCreateResponse;
 import com.trendist.post_service.domain.post.repository.PostRepository;
 import com.trendist.post_service.global.response.status.ErrorStatus;
 
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +42,7 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final UserServiceClient userServiceClient;
+	private final ElasticsearchOperations esOps;
 
 	@Transactional
 	public PostCreateResponse createPost(PostCreateRequest postCreateRequest) {
@@ -131,5 +141,34 @@ public class PostService {
 			like = false;
 		}
 		return PostLikeResponse.of(postLike, like);
+	}
+
+	public Page<PostSearchResponse> searchPosts(String keyword, int page) {
+		Pageable pageable = PageRequest.of(page, 10);
+
+		NativeQuery query = NativeQuery.builder()
+			.withQuery(q -> q
+				.wildcard(w -> w
+					.field("post_title.keyword")
+					.value("*" + keyword + "*")
+				)
+			)
+			.withSort(s -> s.field(f -> f
+					.field("created_at.keyword")
+					.order(SortOrder.Desc)
+				)
+			)
+			.withPageable(pageable)
+			.build();
+
+		// 3) 검색 실행
+		SearchHits<PostDocument> hits = esOps.search(query, PostDocument.class);
+
+		List<PostSearchResponse> content = hits.getSearchHits().stream()
+			.map(SearchHit::getContent)
+			.map(PostSearchResponse::from)
+			.toList();
+
+		return new PageImpl<>(content, pageable, hits.getTotalHits());
 	}
 }

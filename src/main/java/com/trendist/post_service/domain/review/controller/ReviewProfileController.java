@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/profile")
+@RequestMapping("/profile/reviews")
 public class ReviewProfileController {
 	private final ReviewProfileService reviewProfileService;
 
@@ -29,7 +29,7 @@ public class ReviewProfileController {
 		summary = "내가 쓴 리뷰 게시판 게시물 조회",
 		description = "현재 로그인한 사용자가 리뷰 게시판에 자신이 생성한 게시물들을 조회합니다.(본인 프로필용)"
 	)
-	@GetMapping("/reviews/mine")
+	@GetMapping("/mine")
 	public ApiResponse<Page<ReviewGetUserResponse>> getMyReviews(@RequestParam(defaultValue = "0") int page) {
 		return ApiResponse.onSuccess(reviewProfileService.getMyReviews(page));
 	}
@@ -38,7 +38,7 @@ public class ReviewProfileController {
 		summary = "특정 사용자가 쓴 리뷰 게시물 조회",
 		description = "특정 사용자가 리뷰 게시판에 본인이 생성한 게시물들을 조회합니다.(특정 사용자 프로필용)"
 	)
-	@GetMapping("/reviews/{userId}")
+	@GetMapping("/{userId}")
 	public ApiResponse<Page<ReviewGetUserResponse>> getUserReviews(
 		@RequestParam(defaultValue = "0") int page,
 		@PathVariable(name = "userId") UUID userId) {
@@ -49,7 +49,7 @@ public class ReviewProfileController {
 		summary = "활동 종류별 자신이 진행한 활동 통계 조회",
 		description = "활동 종류별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
 	)
-	@GetMapping("/reviews/mine/type/count")
+	@GetMapping("/mine/type/count")
 	public ApiResponse<List<ReviewGetTypeCountResponse>> countMyReviewsByType() {
 		return ApiResponse.onSuccess(reviewProfileService.countMyReviewsByType());
 	}
@@ -58,7 +58,7 @@ public class ReviewProfileController {
 		summary = "활동 종류별 특정 사용자가 진행한 활동 통계 조회",
 		description = "활동 종류별로 특정 사용자가 진행한 활동들이 총 몇개인지 통계를 조회합니다."
 	)
-	@GetMapping("/reviews/{userId}/type/count")
+	@GetMapping("/{userId}/type/count")
 	public ApiResponse<List<ReviewGetTypeCountResponse>> countUserReviewsByType(
 		@PathVariable(name = "userId") UUID userId) {
 		return ApiResponse.onSuccess(reviewProfileService.countUserReviewsByType(userId));
@@ -68,7 +68,7 @@ public class ReviewProfileController {
 		summary = "키워드별 자신이 진행한 활동 통계 조회",
 		description = "키워드별로 자신이 진행한 활동들이 총 몇개인지 통계를 조회합니다."
 	)
-	@GetMapping("/reviews/mine/keyword/count")
+	@GetMapping("/mine/keyword/count")
 	public ApiResponse<List<ReviewGetKeywordCountResponse>> countMyReviewsByKeyword() {
 		return ApiResponse.onSuccess(reviewProfileService.countMyReviewsByKeyword());
 	}
@@ -77,7 +77,7 @@ public class ReviewProfileController {
 		summary = "키워드별 특정 사용자가 진행한 활동 통계 조회",
 		description = "키워드별로 특정 사용자가 진행한 활동들이 총 몇개인지 통계를 조회합니다."
 	)
-	@GetMapping("/reviews/{userId}/keyword/count")
+	@GetMapping("/{userId}/keyword/count")
 	public ApiResponse<List<ReviewGetKeywordCountResponse>> countUserReviewsByKeyword(
 		@PathVariable(name = "userId") UUID userId) {
 		return ApiResponse.onSuccess(reviewProfileService.countUserReviewsByKeyword(userId));
