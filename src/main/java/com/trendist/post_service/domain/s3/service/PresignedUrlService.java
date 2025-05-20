@@ -39,7 +39,7 @@ public class PresignedUrlService {
 		}
 
 		List<String> urls = originalFilenames.stream()
-			.map(this::createPath)
+			.map(this::createPostPath)
 			.map(path -> {
 				GeneratePresignedUrlRequest request = getGeneratePreSignedUrlRequest(bucketName, path);
 				URL presignedUrl = amazonS3.generatePresignedUrl(request);
@@ -52,7 +52,7 @@ public class PresignedUrlService {
 
 	@Transactional
 	public PresignedUrlResponse getPreSignedUrl(String originalFilename) {
-		String path = createPath(originalFilename);
+		String path = createAwardPath(originalFilename);
 		GeneratePresignedUrlRequest request = getGeneratePreSignedUrlRequest(bucketName, path);
 		URL prsignedUrl = amazonS3.generatePresignedUrl(request);
 
@@ -78,7 +78,14 @@ public class PresignedUrlService {
 		return UUID.randomUUID().toString();
 	}
 
-	private String createPath(String fileName) {
+	private String createPostPath(String fileName) {
+		String prefix = "posts";
+		String fileId = createFileId();
+		return String.format("%s/%s", prefix, fileId + fileName);
+	}
+
+	private String createAwardPath(String fileName) {
+		String prefix = "award";
 		String fileId = createFileId();
 		return String.format("%s/%s", prefix, fileId + fileName);
 	}
