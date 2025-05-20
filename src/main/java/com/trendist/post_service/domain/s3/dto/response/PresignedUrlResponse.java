@@ -1,16 +1,14 @@
 package com.trendist.post_service.domain.s3.dto.response;
 
-import java.util.List;
-
 import lombok.Builder;
 
 @Builder
 public record PresignedUrlResponse(
-	List<String> PresignedUrls
+	String presignedUrl
 ) {
-	public static PresignedUrlResponse from(List<String> urls) {
+	public static PresignedUrlResponse from(String url) {
 		return PresignedUrlResponse.builder()
-			.PresignedUrls(urls)
+			.presignedUrl(url)
 			.build();
 	}
 }

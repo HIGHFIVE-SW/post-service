@@ -12,9 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.trendist.post_service.domain.s3.dto.response.PresignedUrlResponse;
 import com.trendist.post_service.global.exception.ApiException;
 import com.trendist.post_service.global.response.status.ErrorStatus;
-import com.trendist.post_service.domain.s3.dto.response.PresignedUrlResponse;
+import com.trendist.post_service.domain.s3.dto.response.PresignedUrlsResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +33,7 @@ public class PresignedUrlService {
 	private static final int MAX_FILES_COUNT = 5;
 
 	@Transactional
-	public PresignedUrlResponse getPreSignedUrl(List<String> originalFilenames) {
+	public PresignedUrlsResponse getPreSignedUrls(List<String> originalFilenames) {
 		if (originalFilenames.size() > MAX_FILES_COUNT) {
 			throw new ApiException(ErrorStatus._S3_OVER_MAX_FILES);
 		}
@@ -46,7 +47,16 @@ public class PresignedUrlService {
 			})
 			.toList();
 
-		return PresignedUrlResponse.from(urls);
+		return PresignedUrlsResponse.from(urls);
+	}
+
+	@Transactional
+	public PresignedUrlResponse getPreSignedUrl(String originalFilename) {
+		String path = createPath(originalFilename);
+		GeneratePresignedUrlRequest request = getGeneratePreSignedUrlRequest(bucketName, path);
+		URL prsignedUrl = amazonS3.generatePresignedUrl(request);
+
+		return PresignedUrlResponse.from(prsignedUrl.toString());
 	}
 
 	private GeneratePresignedUrlRequest getGeneratePreSignedUrlRequest(String bucket, String fileName) {
