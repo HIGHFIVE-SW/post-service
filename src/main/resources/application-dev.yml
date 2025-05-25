@@ -2,8 +2,6 @@ server:
   port: 8081
 
 spring:
-  profiles:
-    active: local
   application:
     name: post-service
   cloud:
@@ -17,9 +15,9 @@ spring:
             connect-timeout: 5000
             read-timeout: 5000
   datasource:
-    url: ${DB_URL}
+    url: ENC(/bPAEoYFr7rEruCvDWHu8LZbFfFDWkllO82wiNYmWqWq4YuHI7hm0b8S4QNhnMDM0wFeR1/tTMoR+UVACDKd3WdwGc8XyLUJI5SgmnL6cbxgwU9hRcAG9j+PNoBvD2Jh)
     username: admin
-    password: ${DB_PASSWORD}
+    password: ENC(3BPIozGn4dpefIL0XbYlMo15Y4L/QM30)
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
@@ -35,23 +33,23 @@ spring:
     init:
       mode: always
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://158.180.74.204:9200
     connection-timeout: 1000
 
-server-uri: http://localhost:8000
+server-uri: http://61.109.236.137:8000
 
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://61.109.236.137:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 aws:
   s3:
-    accessKey: ${S3_ACCESS_KEY}
-    secretKey: ${S3_SECRET_KEY}
-    bucketName: ${S3_BUCKET}
+    accessKey: ENC(cYzS3lv8ETCF6w3dxr6EbSWPJEDpbkkwIGpefNBm1LI=)
+    secretKey: ENC(o7FqH8ixDcYs69rIu87fdcHPQ86fCxx7aAuk0jHLjB2jmtAlM9pkfuKdqfMhW5gwdxnSSiUsyns=)
+    bucketName: ENC(x8uVDyRiXAUGIxS61MYoABMfPEKcxyCR)
     region: ap-northeast-2
