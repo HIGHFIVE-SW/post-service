@@ -35,6 +35,9 @@ public enum ErrorStatus implements BaseErrorCode {
 	_REVIEW_IMAGE_REQUIRED(HttpStatus.BAD_REQUEST, "REVIEW_004", "리뷰에는 최소 1개의 이미지를 첨부해야 합니다."),
 	_REVIEW_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_005", "해당 리뷰에 대한 좋아요가 존재하지 않습니다."),
 
+	//리뷰 이미지 OCR 처리 결과 관련
+	_OCR_PROCESSING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "REVIEW_008", "OCR 검사 처리 중 오류가 발생하였습니다."),
+
 	_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT_001", "해당 댓글이 존재하지 않습니다."),
 	_COMMENT_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "COMMENT_002", "댓글 수정 요청이 거부되었습니다."),
 	_COMMENT_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "COMMENT_003", "댓글 삭제 요청이 거부되었습니다."),

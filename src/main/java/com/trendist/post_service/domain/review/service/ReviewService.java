@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -15,8 +16,10 @@ import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
@@ -28,6 +31,7 @@ import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewActivityCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
+import com.trendist.post_service.domain.review.dto.response.OcrResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
@@ -56,6 +60,21 @@ public class ReviewService {
 	private final UserServiceClient userServiceClient;
 	private final ActivityServiceClient activityServiceClient;
 	private final ElasticsearchOperations esOps;
+	private final RestTemplate restTemplate;
+
+	// OCR flask 서버 기본 URL
+	@Value("$review.ocr.base-url")
+	private String ocrBaseUrl;
+
+	//OCR 검사 호출 메서드
+	private OcrResponse callOcrServer(UUID reviewId) {
+		String url = ocrBaseUrl + "/ocr/" + reviewId;
+		ResponseEntity<OcrResponse> response = restTemplate.getForEntity(url, OcrResponse.class);
+		if (response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+			throw new ApiException(ErrorStatus._OCR_PROCESSING_FAILED);
+		}
+		return response.getBody();
+	}
 
 	@Transactional
 	public ReviewCreateResponse createReview(ReviewCreateRequest reviewCreateRequest) {
@@ -82,6 +101,22 @@ public class ReviewService {
 			.build();
 
 		reviewRepository.save(review);
+
+		// save 이후 reviewId 생성됨, imageUrl 저장됨
+		UUID reviewId = review.getId();
+
+		// flask OCR 요청
+		OcrResponse ocrResponse = callOcrServer(reviewId);
+
+		// Award Img ocr 결과 반영
+		boolean isAwardImgOk = Boolean.parseBoolean(ocrResponse.getAwardOcrResult());
+		review.setAwardOcrResult(isAwardImgOk);
+		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
+
+		// review img ocr 결과 반영
+		boolean isReviewImgOk = Boolean.parseBoolean(ocrResponse.getOcrResult());
+		review.setOcrResult(isReviewImgOk);
+		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
 
 		return ReviewCreateResponse.from(review);
 	}
@@ -117,6 +152,22 @@ public class ReviewService {
 
 		reviewRepository.save(review);
 
+		// save 이후 reviewId 생성됨, imageUrl 저장됨
+		UUID reviewId = review.getId();
+
+		// flask OCR 요청
+		OcrResponse ocrResponse = callOcrServer(reviewId);
+
+		// Award Img ocr 결과 반영
+		boolean isAwardImgOk = Boolean.parseBoolean(ocrResponse.getAwardOcrResult());
+		review.setAwardOcrResult(isAwardImgOk);
+		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
+
+		// review img ocr 결과 반영
+		boolean isReviewImgOk = Boolean.parseBoolean(ocrResponse.getOcrResult());
+		review.setOcrResult(isReviewImgOk);
+		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
+
 		return ReviewCreateResponse.from(review);
 	}
 
@@ -141,6 +192,19 @@ public class ReviewService {
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 
 		reviewRepository.save(review);
+
+		// flask OCR 요청
+		OcrResponse ocrResponse = callOcrServer(reviewId);
+
+		// Award Img ocr 결과 반영
+		boolean isAwardImgOk = Boolean.parseBoolean(ocrResponse.getAwardOcrResult());
+		review.setAwardOcrResult(isAwardImgOk);
+		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
+
+		// review img ocr 결과 반영
+		boolean isReviewImgOk = Boolean.parseBoolean(ocrResponse.getOcrResult());
+		review.setOcrResult(isReviewImgOk);
+		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
 
 		return ReviewUpdateResponse.from(review);
 	}

@@ -85,6 +85,12 @@ public class Review extends BaseTimeEntity {
 	@Builder.Default
 	private Integer likeCount = 0;
 
+	@Column(name = "award_ocr_result")
+	private Boolean awardOcrResult = false;
+
+	@Column(name = "ocr_result")
+	private Boolean ocrResult = false;
+
 	@Column(name = "deleted")
 	@Builder.Default
 	private Boolean deleted = false;

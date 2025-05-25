@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
@@ -40,4 +41,20 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 	@Modifying
 	@Query("UPDATE reviews r SET r.likeCount = r.likeCount - 1 WHERE r.id = :reviewId AND r.likeCount > 0")
 	void decrementLikeCount(@Param("reviewId") UUID reviewId);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE reviews r SET r.awardOcrResult = :awardOcrResult WHERE r.id = :reviewId")
+	void updateAwardOcrResult(
+		@Param("reviewId") UUID reviewId,
+		@Param("awardOcrResult") boolean awardOcrResult
+	);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE reviews r SET r.ocrResult = :ocrResult WHERE r.id = :reviewId")
+	void updateOcrResult(
+		@Param("reviewId") UUID reviewId,
+		@Param("ocrResult") boolean ocrResult
+	);
 }
