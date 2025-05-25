@@ -63,7 +63,7 @@ public class ReviewService {
 	private final RestTemplate restTemplate;
 
 	// OCR flask 서버 기본 URL
-	@Value("$review.ocr.base-url")
+	@Value("${review.ocr.base-url}")
 	private String ocrBaseUrl;
 
 	//OCR 검사 호출 메서드
