@@ -1,4 +1,4 @@
-package com.trendist.post_service.domain.review.dto.response;
+package com.trendist.post_service.global.feign.ocr.dto;
 
 public record ReviewOcrResponse(
 	Boolean awardOcrResult,

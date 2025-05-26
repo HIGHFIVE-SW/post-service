@@ -1,4 +1,4 @@
-package com.trendist.post_service.domain.review.dto.request;
+package com.trendist.post_service.global.feign.ocr.dto;
 
 import java.util.List;
 

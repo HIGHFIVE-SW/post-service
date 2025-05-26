@@ -18,7 +18,6 @@ import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
@@ -29,9 +28,9 @@ import com.trendist.post_service.domain.review.domain.ReviewLike;
 import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewActivityCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
-import com.trendist.post_service.domain.review.dto.request.ReviewOcrRequest;
+import com.trendist.post_service.global.feign.ocr.dto.ReviewOcrRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
-import com.trendist.post_service.domain.review.dto.response.ReviewOcrResponse;
+import com.trendist.post_service.global.feign.ocr.dto.ReviewOcrResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
@@ -44,6 +43,7 @@ import com.trendist.post_service.domain.review.repository.ReviewRepository;
 import com.trendist.post_service.global.exception.ApiException;
 import com.trendist.post_service.global.feign.activity.client.ActivityServiceClient;
 import com.trendist.post_service.global.feign.activity.dto.ActivityGetResponse;
+import com.trendist.post_service.global.feign.ocr.client.OcrClient;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
 import com.trendist.post_service.global.response.status.ErrorStatus;
 
@@ -60,7 +60,7 @@ public class ReviewService {
 	private final UserServiceClient userServiceClient;
 	private final ActivityServiceClient activityServiceClient;
 	private final ElasticsearchOperations esOps;
-	private final RestTemplate restTemplate;
+	private final OcrClient ocrClient;
 
 	// OCR flask 서버 기본 URL
 	@Value("${review.ocr.base-url}")
@@ -76,8 +76,12 @@ public class ReviewService {
 			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
 		}
 
-		ReviewOcrResponse ocrResponse = verifyImgOcr(reviewCreateRequest.awardImageUrl(),
-			reviewCreateRequest.imageUrls());
+		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new ReviewOcrRequest(
+				reviewCreateRequest.awardImageUrl(),
+				reviewCreateRequest.imageUrls()
+			)
+		);
 
 		Review review = Review.builder()
 			.title(reviewCreateRequest.title())
@@ -114,7 +118,12 @@ public class ReviewService {
 
 		ActivityGetResponse activity = activityServiceClient.getActivity(activityId).getResult();
 
-		ReviewOcrResponse ocrResponse = verifyImgOcr(request.awardImageUrl(), request.imageUrls());
+		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new ReviewOcrRequest(
+				request.awardImageUrl(),
+				request.imageUrls()
+			)
+		);
 
 		Review review = Review.builder()
 			.activityId(activityId)
@@ -158,9 +167,12 @@ public class ReviewService {
 		review.setAwardImageUrl(reviewUpdateRequest.awardImageUrl());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 
-		ReviewOcrResponse ocrResponse = verifyImgOcr(reviewUpdateRequest.awardImageUrl(),
-			reviewUpdateRequest.imageUrls());
-
+		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new ReviewOcrRequest(
+				reviewUpdateRequest.awardImageUrl(),
+				reviewUpdateRequest.imageUrls()
+			)
+		);
 		review.setAwardOcrResult(ocrResponse.awardOcrResult());
 		review.setOcrResult(ocrResponse.ocrResult());
 
@@ -305,13 +317,5 @@ public class ReviewService {
 			.toList();
 
 		return new PageImpl<>(content, pageable, reviewHits.getTotalHits());
-	}
-
-	//OCR 검사 호출 메서드
-	private ReviewOcrResponse verifyImgOcr(String awardImageUrl, List<String> imageUrls) {
-		String url = ocrBaseUrl + "/ocr";
-		ReviewOcrRequest payload = new ReviewOcrRequest(awardImageUrl, imageUrls);
-
-		return restTemplate.postForEntity(url, payload, ReviewOcrResponse.class).getBody();
 	}
 }
