@@ -26,8 +26,8 @@ public record ReviewCreateResponse(
 	String content,
 	String awardImageUrl,
 	List<String> imageUrls,
-	Boolean award_ocr_result,
-	Boolean ocr_result,
+	Boolean awardOcrResult,
+	Boolean ocrResult,
 	Boolean deleted
 ) {
 	public static ReviewCreateResponse from(Review review) {
@@ -45,8 +45,8 @@ public record ReviewCreateResponse(
 			.content(review.getContent())
 			.awardImageUrl(review.getAwardImageUrl())
 			.imageUrls(review.getImageUrls())
-			.award_ocr_result(review.getAwardOcrResult())
-			.ocr_result(review.getOcrResult())
+			.awardOcrResult(review.getAwardOcrResult())
+			.ocrResult(review.getOcrResult())
 			.deleted(review.getDeleted())
 			.build();
 	}

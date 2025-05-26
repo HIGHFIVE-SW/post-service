@@ -16,7 +16,6 @@ import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -30,6 +29,7 @@ import com.trendist.post_service.domain.review.domain.ReviewLike;
 import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewActivityCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
+import com.trendist.post_service.domain.review.dto.request.ReviewOcrRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
 import com.trendist.post_service.domain.review.dto.response.ReviewOcrResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
@@ -76,6 +76,9 @@ public class ReviewService {
 			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
 		}
 
+		ReviewOcrResponse ocrResponse = verifyImgOcr(reviewCreateRequest.awardImageUrl(),
+			reviewCreateRequest.imageUrls());
+
 		Review review = Review.builder()
 			.title(reviewCreateRequest.title())
 			.keyword(reviewCreateRequest.keyword())
@@ -86,28 +89,15 @@ public class ReviewService {
 			.content(reviewCreateRequest.content())
 			.awardImageUrl(reviewCreateRequest.awardImageUrl())
 			.imageUrls(reviewCreateRequest.imageUrls())
+			.awardOcrResult(ocrResponse.awardOcrResult())
+			.ocrResult(ocrResponse.ocrResult())
 			.userId(userId)
 			.nickname(nickname)
 			.build();
 
-		Review savedReview = reviewRepository.save(review);
+		reviewRepository.save(review);
 
-		// save 이후 reviewId 생성됨, imageUrl 저장됨
-		UUID reviewId = savedReview.getId();
-
-		// flask OCR 요청
-		ReviewOcrResponse reviewOcrResponse = verifyImgOcr(reviewId);
-
-		// Img ocr 결과 반영
-		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
-		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
-
-		savedReview.setAwardOcrResult(isAwardImgOk);
-		savedReview.setOcrResult(isReviewImgOk);
-
-		reviewRepository.save(savedReview);
-
-		return ReviewCreateResponse.from(savedReview);
+		return ReviewCreateResponse.from(review);
 	}
 
 	@Transactional
@@ -124,6 +114,8 @@ public class ReviewService {
 
 		ActivityGetResponse activity = activityServiceClient.getActivity(activityId).getResult();
 
+		ReviewOcrResponse ocrResponse = verifyImgOcr(request.awardImageUrl(), request.imageUrls());
+
 		Review review = Review.builder()
 			.activityId(activityId)
 			.title(request.title())
@@ -135,28 +127,15 @@ public class ReviewService {
 			.content(request.content())
 			.awardImageUrl(request.awardImageUrl())
 			.imageUrls(request.imageUrls())
+			.awardOcrResult(ocrResponse.awardOcrResult())
+			.ocrResult(ocrResponse.ocrResult())
 			.userId(userId)
 			.nickname(nickname)
 			.build();
 
-		Review savedReview = reviewRepository.save(review);
+		reviewRepository.save(review);
 
-		// save 이후 reviewId 생성됨, imageUrl 저장됨
-		UUID reviewId = savedReview.getId();
-
-		// flask OCR 요청
-		ReviewOcrResponse reviewOcrResponse = verifyImgOcr(reviewId);
-
-		// Img ocr 결과 반영
-		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
-		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
-
-		savedReview.setAwardOcrResult(isAwardImgOk);
-		savedReview.setOcrResult(isReviewImgOk);
-
-		reviewRepository.save(savedReview);
-
-		return ReviewCreateResponse.from(savedReview);
+		return ReviewCreateResponse.from(review);
 	}
 
 	@Transactional
@@ -179,15 +158,11 @@ public class ReviewService {
 		review.setAwardImageUrl(reviewUpdateRequest.awardImageUrl());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 
-		// flask OCR 요청
-		ReviewOcrResponse reviewOcrResponse = verifyImgOcr(reviewId);
+		ReviewOcrResponse ocrResponse = verifyImgOcr(reviewUpdateRequest.awardImageUrl(),
+			reviewUpdateRequest.imageUrls());
 
-		// Img ocr 결과 반영
-		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
-		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
-
-		review.setAwardOcrResult(isAwardImgOk);
-		review.setOcrResult(isReviewImgOk);
+		review.setAwardOcrResult(ocrResponse.awardOcrResult());
+		review.setOcrResult(ocrResponse.ocrResult());
 
 		reviewRepository.save(review);
 
@@ -333,12 +308,10 @@ public class ReviewService {
 	}
 
 	//OCR 검사 호출 메서드
-	private ReviewOcrResponse verifyImgOcr(UUID reviewId) {
-		String url = ocrBaseUrl + "/ocr/" + reviewId;
-		ResponseEntity<ReviewOcrResponse> response = restTemplate.getForEntity(url, ReviewOcrResponse.class);
-		if (response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-			throw new ApiException(ErrorStatus._OCR_PROCESSING_FAILED);
-		}
-		return response.getBody();
+	private ReviewOcrResponse verifyImgOcr(String awardImageUrl, List<String> imageUrls) {
+		String url = ocrBaseUrl + "/ocr";
+		ReviewOcrRequest payload = new ReviewOcrRequest(awardImageUrl, imageUrls);
+
+		return restTemplate.postForEntity(url, payload, ReviewOcrResponse.class).getBody();
 	}
 }

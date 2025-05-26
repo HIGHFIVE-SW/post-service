@@ -16,8 +16,8 @@ public record ReviewUpdateResponse(
 	String awardImageUrl,
 	List<String> imageUrls,
 	LocalDateTime updatedAt,
-	Boolean award_ocr_result,
-	Boolean ocr_result
+	Boolean awardOcrResult,
+	Boolean ocrResult
 ) {
 	public static ReviewUpdateResponse from(Review review) {
 		return ReviewUpdateResponse.builder()
@@ -27,8 +27,8 @@ public record ReviewUpdateResponse(
 			.awardImageUrl(review.getAwardImageUrl())
 			.imageUrls(review.getImageUrls())
 			.updatedAt(review.getUpdatedAt())
-			.award_ocr_result(review.getAwardOcrResult())
-			.ocr_result(review.getOcrResult())
+			.awardOcrResult(review.getAwardOcrResult())
+			.ocrResult(review.getOcrResult())
 			.build();
 	}
 }
