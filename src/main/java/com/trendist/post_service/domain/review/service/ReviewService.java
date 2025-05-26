@@ -66,16 +66,6 @@ public class ReviewService {
 	@Value("${review.ocr.base-url}")
 	private String ocrBaseUrl;
 
-	//OCR 검사 호출 메서드
-	private ReviewOcrResponse callOcrServer(UUID reviewId) {
-		String url = ocrBaseUrl + "/ocr/" + reviewId;
-		ResponseEntity<ReviewOcrResponse> response = restTemplate.getForEntity(url, ReviewOcrResponse.class);
-		if (response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-			throw new ApiException(ErrorStatus._OCR_PROCESSING_FAILED);
-		}
-		return response.getBody();
-	}
-
 	@Transactional
 	public ReviewCreateResponse createReview(ReviewCreateRequest reviewCreateRequest) {
 		UUID userId = userServiceClient.getMyProfile("").getResult().id();
@@ -100,25 +90,24 @@ public class ReviewService {
 			.nickname(nickname)
 			.build();
 
-		reviewRepository.save(review);
+		Review savedReview = reviewRepository.save(review);
 
 		// save 이후 reviewId 생성됨, imageUrl 저장됨
-		UUID reviewId = review.getId();
+		UUID reviewId = savedReview.getId();
 
 		// flask OCR 요청
-		ReviewOcrResponse reviewOcrResponse = callOcrServer(reviewId);
+		ReviewOcrResponse reviewOcrResponse = verifyImgOcr(reviewId);
 
-		// Award Img ocr 결과 반영
+		// Img ocr 결과 반영
 		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
-		review.setAwardOcrResult(isAwardImgOk);
-		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
-
-		// review img ocr 결과 반영
 		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
-		review.setOcrResult(isReviewImgOk);
-		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
 
-		return ReviewCreateResponse.from(review);
+		savedReview.setAwardOcrResult(isAwardImgOk);
+		savedReview.setOcrResult(isReviewImgOk);
+
+		reviewRepository.save(savedReview);
+
+		return ReviewCreateResponse.from(savedReview);
 	}
 
 	@Transactional
@@ -150,25 +139,24 @@ public class ReviewService {
 			.nickname(nickname)
 			.build();
 
-		reviewRepository.save(review);
+		Review savedReview = reviewRepository.save(review);
 
 		// save 이후 reviewId 생성됨, imageUrl 저장됨
-		UUID reviewId = review.getId();
+		UUID reviewId = savedReview.getId();
 
 		// flask OCR 요청
-		ReviewOcrResponse reviewOcrResponse = callOcrServer(reviewId);
+		ReviewOcrResponse reviewOcrResponse = verifyImgOcr(reviewId);
 
-		// Award Img ocr 결과 반영
+		// Img ocr 결과 반영
 		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
-		review.setAwardOcrResult(isAwardImgOk);
-		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
-
-		// review img ocr 결과 반영
 		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
-		review.setOcrResult(isReviewImgOk);
-		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
 
-		return ReviewCreateResponse.from(review);
+		savedReview.setAwardOcrResult(isAwardImgOk);
+		savedReview.setOcrResult(isReviewImgOk);
+
+		reviewRepository.save(savedReview);
+
+		return ReviewCreateResponse.from(savedReview);
 	}
 
 	@Transactional
@@ -191,20 +179,17 @@ public class ReviewService {
 		review.setAwardImageUrl(reviewUpdateRequest.awardImageUrl());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 
-		reviewRepository.save(review);
-
 		// flask OCR 요청
-		ReviewOcrResponse reviewOcrResponse = callOcrServer(reviewId);
+		ReviewOcrResponse reviewOcrResponse = verifyImgOcr(reviewId);
 
-		// Award Img ocr 결과 반영
+		// Img ocr 결과 반영
 		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
-		review.setAwardOcrResult(isAwardImgOk);
-		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
-
-		// review img ocr 결과 반영
 		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
+
+		review.setAwardOcrResult(isAwardImgOk);
 		review.setOcrResult(isReviewImgOk);
-		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
+
+		reviewRepository.save(review);
 
 		return ReviewUpdateResponse.from(review);
 	}
@@ -345,5 +330,15 @@ public class ReviewService {
 			.toList();
 
 		return new PageImpl<>(content, pageable, reviewHits.getTotalHits());
+	}
+
+	//OCR 검사 호출 메서드
+	private ReviewOcrResponse verifyImgOcr(UUID reviewId) {
+		String url = ocrBaseUrl + "/ocr/" + reviewId;
+		ResponseEntity<ReviewOcrResponse> response = restTemplate.getForEntity(url, ReviewOcrResponse.class);
+		if (response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+			throw new ApiException(ErrorStatus._OCR_PROCESSING_FAILED);
+		}
+		return response.getBody();
 	}
 }
