@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class OcrResponse {
+public class ReviewOcrResponse {
 	@JsonProperty("award_ocr_result")
 	private String awardOcrResult;
 

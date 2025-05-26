@@ -31,7 +31,7 @@ import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewActivityCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
-import com.trendist.post_service.domain.review.dto.response.OcrResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewOcrResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
@@ -67,9 +67,9 @@ public class ReviewService {
 	private String ocrBaseUrl;
 
 	//OCR 검사 호출 메서드
-	private OcrResponse callOcrServer(UUID reviewId) {
+	private ReviewOcrResponse callOcrServer(UUID reviewId) {
 		String url = ocrBaseUrl + "/ocr/" + reviewId;
-		ResponseEntity<OcrResponse> response = restTemplate.getForEntity(url, OcrResponse.class);
+		ResponseEntity<ReviewOcrResponse> response = restTemplate.getForEntity(url, ReviewOcrResponse.class);
 		if (response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
 			throw new ApiException(ErrorStatus._OCR_PROCESSING_FAILED);
 		}
@@ -106,15 +106,15 @@ public class ReviewService {
 		UUID reviewId = review.getId();
 
 		// flask OCR 요청
-		OcrResponse ocrResponse = callOcrServer(reviewId);
+		ReviewOcrResponse reviewOcrResponse = callOcrServer(reviewId);
 
 		// Award Img ocr 결과 반영
-		boolean isAwardImgOk = Boolean.parseBoolean(ocrResponse.getAwardOcrResult());
+		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
 		review.setAwardOcrResult(isAwardImgOk);
 		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
 
 		// review img ocr 결과 반영
-		boolean isReviewImgOk = Boolean.parseBoolean(ocrResponse.getOcrResult());
+		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
 		review.setOcrResult(isReviewImgOk);
 		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
 
@@ -156,15 +156,15 @@ public class ReviewService {
 		UUID reviewId = review.getId();
 
 		// flask OCR 요청
-		OcrResponse ocrResponse = callOcrServer(reviewId);
+		ReviewOcrResponse reviewOcrResponse = callOcrServer(reviewId);
 
 		// Award Img ocr 결과 반영
-		boolean isAwardImgOk = Boolean.parseBoolean(ocrResponse.getAwardOcrResult());
+		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
 		review.setAwardOcrResult(isAwardImgOk);
 		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
 
 		// review img ocr 결과 반영
-		boolean isReviewImgOk = Boolean.parseBoolean(ocrResponse.getOcrResult());
+		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
 		review.setOcrResult(isReviewImgOk);
 		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
 
@@ -194,15 +194,15 @@ public class ReviewService {
 		reviewRepository.save(review);
 
 		// flask OCR 요청
-		OcrResponse ocrResponse = callOcrServer(reviewId);
+		ReviewOcrResponse reviewOcrResponse = callOcrServer(reviewId);
 
 		// Award Img ocr 결과 반영
-		boolean isAwardImgOk = Boolean.parseBoolean(ocrResponse.getAwardOcrResult());
+		boolean isAwardImgOk = Boolean.parseBoolean(reviewOcrResponse.getAwardOcrResult());
 		review.setAwardOcrResult(isAwardImgOk);
 		reviewRepository.updateAwardOcrResult(reviewId, isAwardImgOk);
 
 		// review img ocr 결과 반영
-		boolean isReviewImgOk = Boolean.parseBoolean(ocrResponse.getOcrResult());
+		boolean isReviewImgOk = Boolean.parseBoolean(reviewOcrResponse.getOcrResult());
 		review.setOcrResult(isReviewImgOk);
 		reviewRepository.updateOcrResult(reviewId, isReviewImgOk);
 
