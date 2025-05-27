@@ -58,4 +58,4 @@ aws:
 
 review:
   ocr:
-    base-url: http://central-01.tcp.tunnel.elice.io:50643
+    base-url: http://central-01.tcp.tunnel.elice.io:50643/ocr

@@ -51,9 +51,11 @@ import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermsQueryField;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final ReviewLikeRepository reviewLikeRepository;
@@ -61,10 +63,6 @@ public class ReviewService {
 	private final ActivityServiceClient activityServiceClient;
 	private final ElasticsearchOperations esOps;
 	private final OcrClient ocrClient;
-
-	// OCR flask 서버 기본 URL
-	@Value("${review.ocr.base-url}")
-	private String ocrBaseUrl;
 
 	@Transactional
 	public ReviewCreateResponse createReview(ReviewCreateRequest reviewCreateRequest) {
@@ -78,9 +76,16 @@ public class ReviewService {
 
 		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
 			new ReviewOcrRequest(
+				reviewCreateRequest.imageUrls(),
 				reviewCreateRequest.awardImageUrl(),
-				reviewCreateRequest.imageUrls()
+				reviewCreateRequest.title()
 			)
+		);
+
+		log.info(
+			"OCR 결과 - awardOcrResult: {}, ocrResult: {}",
+			ocrResponse.awardOcrResult(),
+			ocrResponse.ocrResult()
 		);
 
 		Review review = Review.builder()
@@ -120,8 +125,9 @@ public class ReviewService {
 
 		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
 			new ReviewOcrRequest(
+				request.imageUrls(),
 				request.awardImageUrl(),
-				request.imageUrls()
+				request.title()
 			)
 		);
 
@@ -169,8 +175,9 @@ public class ReviewService {
 
 		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
 			new ReviewOcrRequest(
+				reviewUpdateRequest.imageUrls(),
 				reviewUpdateRequest.awardImageUrl(),
-				reviewUpdateRequest.imageUrls()
+				reviewUpdateRequest.title()
 			)
 		);
 		review.setAwardOcrResult(ocrResponse.awardOcrResult());
