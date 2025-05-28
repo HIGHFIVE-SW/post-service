@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +27,9 @@ import com.trendist.post_service.domain.review.domain.ReviewLike;
 import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewActivityCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
-import com.trendist.post_service.global.feign.ocr.dto.ReviewOcrRequest;
+import com.trendist.post_service.global.feign.ocr.dto.OcrRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
-import com.trendist.post_service.global.feign.ocr.dto.ReviewOcrResponse;
+import com.trendist.post_service.global.feign.ocr.dto.OcrResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
@@ -51,11 +50,9 @@ import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermsQueryField;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final ReviewLikeRepository reviewLikeRepository;
@@ -74,18 +71,12 @@ public class ReviewService {
 			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
 		}
 
-		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
-			new ReviewOcrRequest(
+		OcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new OcrRequest(
 				reviewCreateRequest.imageUrls(),
 				reviewCreateRequest.awardImageUrl(),
 				reviewCreateRequest.title()
 			)
-		);
-
-		log.info(
-			"OCR 결과 - awardOcrResult: {}, ocrResult: {}",
-			ocrResponse.awardOcrResult(),
-			ocrResponse.ocrResult()
 		);
 
 		Review review = Review.builder()
@@ -123,8 +114,8 @@ public class ReviewService {
 
 		ActivityGetResponse activity = activityServiceClient.getActivity(activityId).getResult();
 
-		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
-			new ReviewOcrRequest(
+		OcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new OcrRequest(
 				request.imageUrls(),
 				request.awardImageUrl(),
 				request.title()
@@ -173,8 +164,8 @@ public class ReviewService {
 		review.setAwardImageUrl(reviewUpdateRequest.awardImageUrl());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
 
-		ReviewOcrResponse ocrResponse = ocrClient.verifyImgOcr(
-			new ReviewOcrRequest(
+		OcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new OcrRequest(
 				reviewUpdateRequest.imageUrls(),
 				reviewUpdateRequest.awardImageUrl(),
 				reviewUpdateRequest.title()

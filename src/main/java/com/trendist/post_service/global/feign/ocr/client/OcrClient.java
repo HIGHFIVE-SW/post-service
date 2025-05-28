@@ -5,8 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.trendist.post_service.global.feign.ocr.dto.ReviewOcrRequest;
-import com.trendist.post_service.global.feign.ocr.dto.ReviewOcrResponse;
+import com.trendist.post_service.global.feign.ocr.dto.OcrRequest;
+import com.trendist.post_service.global.feign.ocr.dto.OcrResponse;
 
 @FeignClient(
 	name = "ocr-service",
@@ -22,5 +22,5 @@ public interface OcrClient {
 		path     = "/",
 		consumes = MediaType.APPLICATION_JSON_VALUE
 	)
-	ReviewOcrResponse verifyImgOcr(@RequestBody ReviewOcrRequest reviewOcrRequest);
+	OcrResponse verifyImgOcr(@RequestBody OcrRequest ocrRequest);
 }
