@@ -15,7 +15,7 @@ spring:
             connect-timeout: 5000
             read-timeout: 5000
   datasource:
-    url: ENC(/bPAEoYFr7rEruCvDWHu8LZbFfFDWkllO82wiNYmWqWq4YuHI7hm0b8S4QNhnMDM0wFeR1/tTMoR+UVACDKd3WdwGc8XyLUJI5SgmnL6cbxgwU9hRcAG9j+PNoBvD2Jh)
+    url: ENC(FcNHU/eL/6pkixUcn5Y5rSoV2nY7qFeF1MmMyBueSW1rH5+mI07xCmiNKCp8yfD4rtKpLuxD3M6wd86KqcVcnM+3zDOv0yddpVi9SgtZYiK8CF6l6Knu8QCGZKYs0B0T)
     username: admin
     password: ENC(3BPIozGn4dpefIL0XbYlMo15Y4L/QM30)
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -33,7 +33,7 @@ spring:
     init:
       mode: always
   elasticsearch:
-    uris: http://158.180.74.204:9200
+    uris: http://210.109.81.201:9200
     connection-timeout: 1000
 
 server-uri: http://61.109.236.137:8000
@@ -53,3 +53,7 @@ aws:
     secretKey: ENC(o7FqH8ixDcYs69rIu87fdcHPQ86fCxx7aAuk0jHLjB2jmtAlM9pkfuKdqfMhW5gwdxnSSiUsyns=)
     bucketName: ENC(x8uVDyRiXAUGIxS61MYoABMfPEKcxyCR)
     region: ap-northeast-2
+
+review:
+  ocr:
+    base-url: http://central-01.tcp.tunnel.elice.io:50643/ocr
