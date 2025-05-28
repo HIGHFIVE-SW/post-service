@@ -27,7 +27,9 @@ import com.trendist.post_service.domain.review.domain.ReviewLike;
 import com.trendist.post_service.domain.review.domain.ReviewSort;
 import com.trendist.post_service.domain.review.dto.request.ReviewActivityCreateRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewCreateRequest;
+import com.trendist.post_service.global.feign.ocr.dto.OcrRequest;
 import com.trendist.post_service.domain.review.dto.request.ReviewUpdateRequest;
+import com.trendist.post_service.global.feign.ocr.dto.OcrResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewCreateResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewDeleteResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetAllResponse;
@@ -40,6 +42,7 @@ import com.trendist.post_service.domain.review.repository.ReviewRepository;
 import com.trendist.post_service.global.exception.ApiException;
 import com.trendist.post_service.global.feign.activity.client.ActivityServiceClient;
 import com.trendist.post_service.global.feign.activity.dto.ActivityGetResponse;
+import com.trendist.post_service.global.feign.ocr.client.OcrClient;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
 import com.trendist.post_service.global.response.status.ErrorStatus;
 
@@ -56,6 +59,7 @@ public class ReviewService {
 	private final UserServiceClient userServiceClient;
 	private final ActivityServiceClient activityServiceClient;
 	private final ElasticsearchOperations esOps;
+	private final OcrClient ocrClient;
 
 	@Transactional
 	public ReviewCreateResponse createReview(ReviewCreateRequest reviewCreateRequest) {
@@ -67,6 +71,14 @@ public class ReviewService {
 			throw new ApiException(ErrorStatus._REVIEW_IMAGE_REQUIRED);
 		}
 
+		OcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new OcrRequest(
+				reviewCreateRequest.imageUrls(),
+				reviewCreateRequest.awardImageUrl(),
+				reviewCreateRequest.title()
+			)
+		);
+
 		Review review = Review.builder()
 			.title(reviewCreateRequest.title())
 			.keyword(reviewCreateRequest.keyword())
@@ -77,6 +89,8 @@ public class ReviewService {
 			.content(reviewCreateRequest.content())
 			.awardImageUrl(reviewCreateRequest.awardImageUrl())
 			.imageUrls(reviewCreateRequest.imageUrls())
+			.awardOcrResult(ocrResponse.awardOcrResult())
+			.ocrResult(ocrResponse.ocrResult())
 			.userId(userId)
 			.nickname(nickname)
 			.build();
@@ -100,6 +114,14 @@ public class ReviewService {
 
 		ActivityGetResponse activity = activityServiceClient.getActivity(activityId).getResult();
 
+		OcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new OcrRequest(
+				request.imageUrls(),
+				request.awardImageUrl(),
+				request.title()
+			)
+		);
+
 		Review review = Review.builder()
 			.activityId(activityId)
 			.title(request.title())
@@ -111,6 +133,8 @@ public class ReviewService {
 			.content(request.content())
 			.awardImageUrl(request.awardImageUrl())
 			.imageUrls(request.imageUrls())
+			.awardOcrResult(ocrResponse.awardOcrResult())
+			.ocrResult(ocrResponse.ocrResult())
 			.userId(userId)
 			.nickname(nickname)
 			.build();
@@ -139,6 +163,16 @@ public class ReviewService {
 		review.setContent(reviewUpdateRequest.content());
 		review.setAwardImageUrl(reviewUpdateRequest.awardImageUrl());
 		review.setImageUrls(reviewUpdateRequest.imageUrls());
+
+		OcrResponse ocrResponse = ocrClient.verifyImgOcr(
+			new OcrRequest(
+				reviewUpdateRequest.imageUrls(),
+				reviewUpdateRequest.awardImageUrl(),
+				reviewUpdateRequest.title()
+			)
+		);
+		review.setAwardOcrResult(ocrResponse.awardOcrResult());
+		review.setOcrResult(ocrResponse.ocrResult());
 
 		reviewRepository.save(review);
 
