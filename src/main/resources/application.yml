@@ -16,6 +16,9 @@ spring:
           default:
             connect-timeout: 5000
             read-timeout: 5000
+          ocr-service:
+            connect-timeout: 5000
+            read-timeout: 60000
   datasource:
     url: ${DB_URL}
     username: admin
