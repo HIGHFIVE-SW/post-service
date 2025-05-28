@@ -38,7 +38,7 @@ spring:
     init:
       mode: always
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://210.109.81.201:9200
     connection-timeout: 1000
 
 server-uri: http://localhost:8000
