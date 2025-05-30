@@ -1,5 +1,6 @@
 package com.trendist.post_service.domain.review.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +34,8 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 		Pageable pageable);
 
 	List<Review> findAllByUserIdAndDeletedFalse(UUID userId);
+
+	List<Review> findAllByUpdatedAtBetween(LocalDateTime start, LocalDateTime end);
 
 	@Modifying
 	@Query("UPDATE reviews r SET r.likeCount = r.likeCount + 1 WHERE r.id = :reviewId")
