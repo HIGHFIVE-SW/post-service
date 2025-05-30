@@ -42,12 +42,10 @@ public class ExpScheduler {
 			}
 		}
 		// user service로 exp 전송
-		for (Map.Entry<UUID, Integer> e : expByUser.entrySet()) {
-			UUID userId = e.getKey();
-			int totalExp = e.getValue();
-			userServiceClient.updateUserExp(
-				userId,
-				new UserExpRequest(totalExp)
+		for (var entry : expByUser.entrySet()) {
+			UUID userId = entry.getKey();
+			int totalExp = entry.getValue();
+			userServiceClient.updateUserExp(userId, new UserExpRequest(totalExp)
 			);
 		}
 	}
@@ -57,17 +55,44 @@ public class ExpScheduler {
 		if (Boolean.FALSE.equals(review.getOcrResult())) {
 			return 0;
 		}
-		//공모전은 awardOcrResult에 따라 300 / 100점 지급
+		//공모전 로직
 		if (review.getActivityType() == ActivityType.CONTEST) {
-			return Boolean.TRUE.equals(review.getAwardOcrResult()) ? 300 : 100;
+			int state = review.getIsExpGiven();
+			boolean won = Boolean.TRUE.equals(review.getAwardOcrResult());
+
+			if (state == 0) {
+				//공모전은 awardOcrResult에 따라 300 / 100점 지급
+				int firstAward = won ? 300 : 100;
+				review.setIsExpGiven(won ? 2 : 1);
+				return firstAward;
+			}
+
+			//수상사진을 처음에 올리지 못하고 뒤늦게 글을 수정하여 올린 경우 ->  추가적으로 200점 획득
+			if (state == 1 && won) {
+				review.setIsExpGiven(2);
+				return 200;
+			}
+
+			//state=2인 경우는 공모전으로 300점까지 획득한 경우 -> 더이상 보상 없음
+			return 0;
 		}
+
+		//공모전이 아닌 경우, 경험치는 오직 1번만 수령 가능
+		if (review.getIsExpGiven() != 0) {
+			return 0;
+		}
+
 		//기타 활동들은 기간에 따라 차등 지급
-		return switch (review.getActivityPeriod()) {
-			case OneDay -> 10;
-			case OneWeek -> 50;
-			case OneMonth -> 200;
-			case WithinSixMonths -> 500;
-			case OverSixMonths -> 1000;
-		};
+		int exp;
+		switch (review.getActivityPeriod()) {
+			case OneDay -> exp = 10;
+			case OneWeek -> exp = 50;
+			case OneMonth -> exp = 200;
+			case WithinSixMonths -> exp = 500;
+			case OverSixMonths -> exp = 1000;
+			default -> exp = 0;
+		}
+		review.setIsExpGiven(1);
+		return exp;
 	}
 }
