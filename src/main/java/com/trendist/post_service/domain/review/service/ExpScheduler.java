@@ -26,7 +26,7 @@ public class ExpScheduler {
 	private final UserServiceClient userServiceClient;
 	private final ReviewRepository reviewRepository;
 
-	@Scheduled(cron = "0 30 1 * * *")
+	@Scheduled(cron = "0 55 23 * * *")
 	@Transactional
 	public void assignDailyPoints() {
 		LocalDateTime end = LocalDate.now().atStartOfDay();
