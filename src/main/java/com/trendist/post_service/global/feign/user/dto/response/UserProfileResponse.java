@@ -1,4 +1,4 @@
-package com.trendist.post_service.global.feign.user.dto;
+package com.trendist.post_service.global.feign.user.dto.response;
 
 import java.util.UUID;
 

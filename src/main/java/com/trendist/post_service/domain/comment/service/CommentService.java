@@ -19,7 +19,7 @@ import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.domain.review.repository.ReviewRepository;
 import com.trendist.post_service.global.exception.ApiException;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
-import com.trendist.post_service.global.feign.user.dto.UserProfileResponse;
+import com.trendist.post_service.global.feign.user.dto.response.UserProfileResponse;
 import com.trendist.post_service.global.response.status.ErrorStatus;
 
 import jakarta.transaction.Transactional;
