@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -27,7 +27,7 @@ public interface UserServiceClient {
 		@PathVariable(name = "userId") UUID userId
 	);
 
-	@PatchMapping("/users/{userId}/exp")
+	@PostMapping("/users/{userId}/exp")
 	ApiResponse<UserUpdateExpResponse> updateUserExp(
 		@PathVariable("userId") UUID userId,
 		@RequestBody int expToAdd
