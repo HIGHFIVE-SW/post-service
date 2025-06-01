@@ -1,6 +1,5 @@
 package com.trendist.post_service.domain.review.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.domain.review.repository.ReviewRepository;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
-import com.trendist.post_service.global.feign.user.dto.request.UserUpdateExpRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,8 +43,7 @@ public class ExpScheduler {
 		for (var entry : expByUser.entrySet()) {
 			UUID userId = entry.getKey();
 			int totalExp = entry.getValue();
-			userServiceClient.updateUserExp(userId, new UserUpdateExpRequest(totalExp)
-			);
+			userServiceClient.updateUserExp(userId, totalExp);
 		}
 	}
 
