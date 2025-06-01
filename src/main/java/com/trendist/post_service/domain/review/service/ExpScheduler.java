@@ -22,15 +22,15 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class ExpScheduler {
-	private final ReviewService reviewService;
 	private final UserServiceClient userServiceClient;
 	private final ReviewRepository reviewRepository;
 
-	@Scheduled(cron = "0 59 23 * * *")
+	// 5:30 부터 6시간 간격
+	@Scheduled(cron = "0 30 5/6 * * *")
 	@Transactional
 	public void assignDailyPoints() {
 		LocalDateTime end = LocalDateTime.now();
-		LocalDateTime start = end.minusHours(24);
+		LocalDateTime start = end.minusHours(6);
 
 		List<Review> reviews = reviewRepository.findAllByUpdatedAtBetween(start, end);
 		Map<UUID, Integer> expByUser = new HashMap<>();
@@ -52,13 +52,13 @@ public class ExpScheduler {
 
 	private int calculateExp(Review review) {
 		//OCR 결과 false 라면 경험치 미지급
-		if (Boolean.FALSE.equals(review.getOcrResult())) {
+		if (!review.getOcrResult()) {
 			return 0;
 		}
 		//공모전 로직
 		if (review.getActivityType() == ActivityType.CONTEST) {
 			int state = review.getIsExpGiven();
-			boolean won = Boolean.TRUE.equals(review.getAwardOcrResult());
+			boolean won = review.getAwardOcrResult();
 
 			if (state == 0) {
 				//공모전은 awardOcrResult에 따라 300 / 100점 지급
