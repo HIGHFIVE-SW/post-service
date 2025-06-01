@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import com.trendist.post_service.global.feign.user.dto.request.UserExpRequest;
+import com.trendist.post_service.global.feign.user.dto.request.UserUpdateExpRequest;
 import com.trendist.post_service.global.feign.user.dto.response.UserProfileResponse;
 import com.trendist.post_service.global.response.ApiResponse;
 
@@ -30,6 +30,6 @@ public interface UserServiceClient {
 	@PostMapping("/users/{userId}/exp")
 	void updateUserExp(
 		@PathVariable("userId") UUID userId,
-		@RequestBody UserExpRequest userExpRequest
+		@RequestBody UserUpdateExpRequest userUpdateExpRequest
 	);
 }

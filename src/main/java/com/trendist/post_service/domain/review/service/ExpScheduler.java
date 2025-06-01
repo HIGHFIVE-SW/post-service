@@ -15,7 +15,7 @@ import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.domain.review.repository.ReviewRepository;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
-import com.trendist.post_service.global.feign.user.dto.request.UserExpRequest;
+import com.trendist.post_service.global.feign.user.dto.request.UserUpdateExpRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,11 +26,11 @@ public class ExpScheduler {
 	private final UserServiceClient userServiceClient;
 	private final ReviewRepository reviewRepository;
 
-	@Scheduled(cron = "0 55 23 * * *")
+	@Scheduled(cron = "0 59 23 * * *")
 	@Transactional
 	public void assignDailyPoints() {
-		LocalDateTime end = LocalDate.now().atStartOfDay();
-		LocalDateTime start = end.minusDays(1);
+		LocalDateTime end = LocalDateTime.now();
+		LocalDateTime start = end.minusHours(24);
 
 		List<Review> reviews = reviewRepository.findAllByUpdatedAtBetween(start, end);
 		Map<UUID, Integer> expByUser = new HashMap<>();
@@ -45,7 +45,7 @@ public class ExpScheduler {
 		for (var entry : expByUser.entrySet()) {
 			UUID userId = entry.getKey();
 			int totalExp = entry.getValue();
-			userServiceClient.updateUserExp(userId, new UserExpRequest(totalExp)
+			userServiceClient.updateUserExp(userId, new UserUpdateExpRequest(totalExp)
 			);
 		}
 	}
