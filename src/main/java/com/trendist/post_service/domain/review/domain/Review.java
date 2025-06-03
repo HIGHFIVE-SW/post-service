@@ -96,4 +96,8 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "deleted")
 	@Builder.Default
 	private Boolean deleted = false;
+
+	@Column(name = "isExpGiven")
+	@Builder.Default
+	private Integer isExpGiven = 0;
 }
