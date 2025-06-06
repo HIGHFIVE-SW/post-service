@@ -40,5 +40,5 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags: highfive.kr-central-2.kcr.dev/trendist-dev/user-service:latest
+          tags: highfive.kr-central-2.kcr.dev/trendist-dev/post-service:latest
           push: true
