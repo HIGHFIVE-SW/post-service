@@ -73,7 +73,7 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "review_content")
 	private String content;
 
-	@Column(name = "award_image_url")
+	@Column(name = "award_image_url", columnDefinition = "TEXT")
 	private String awardImageUrl;
 
 	@ElementCollection(fetch = FetchType.EAGER)
@@ -85,7 +85,7 @@ public class Review extends BaseTimeEntity {
 	@Builder.Default
 	private Integer likeCount = 0;
 
-	@Column(name = "award_ocr_result", columnDefinition = "TEXT")
+	@Column(name = "award_ocr_result")
 	@Builder.Default
 	private Boolean awardOcrResult = false;
 
