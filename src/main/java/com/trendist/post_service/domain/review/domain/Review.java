@@ -70,7 +70,7 @@ public class Review extends BaseTimeEntity {
 	@Column(name = "activity_name")
 	private String activityName;
 
-	@Column(name = "review_content")
+	@Column(name = "review_content", columnDefinition = "TEXT")
 	private String content;
 
 	@Column(name = "award_image_url", columnDefinition = "TEXT")

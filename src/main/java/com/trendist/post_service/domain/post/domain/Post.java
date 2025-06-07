@@ -41,7 +41,7 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "post_title")
 	private String title;
 
-	@Column(name = "post_content")
+	@Column(name = "post_content", columnDefinition = "TEXT")
 	private String content;
 
 	@ElementCollection(fetch = FetchType.EAGER)
