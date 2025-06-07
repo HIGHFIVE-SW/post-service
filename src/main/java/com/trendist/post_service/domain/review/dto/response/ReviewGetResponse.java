@@ -28,6 +28,7 @@ public record ReviewGetResponse(
 	UUID userId,
 	String nickname,
 	String profileUrl,
+	Boolean ocrResult,
 	LocalDateTime createdAt
 ) {
 	public static ReviewGetResponse of(Review review, String profileUrl) {
@@ -46,6 +47,7 @@ public record ReviewGetResponse(
 			.userId(review.getUserId())
 			.nickname(review.getNickname())
 			.profileUrl(profileUrl)
+			.ocrResult(review.getOcrResult())
 			.createdAt(review.getCreatedAt())
 			.build();
 	}
