@@ -78,14 +78,14 @@ public class Review extends BaseTimeEntity {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "review_image_urls", joinColumns = @JoinColumn(name = "review_id"))
-	@Column(name = "image_urls")
+	@Column(name = "image_urls", columnDefinition = "TEXT")
 	private List<String> imageUrls;
 
 	@Column(name = "review_like_count")
 	@Builder.Default
 	private Integer likeCount = 0;
 
-	@Column(name = "award_ocr_result")
+	@Column(name = "award_ocr_result", columnDefinition = "TEXT")
 	@Builder.Default
 	private Boolean awardOcrResult = false;
 

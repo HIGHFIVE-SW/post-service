@@ -46,7 +46,7 @@ public class Post extends BaseTimeEntity {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "post_image_urls", joinColumns = @JoinColumn(name = "post_id"))
-	@Column(name = "image_urls")
+	@Column(name = "image_urls", columnDefinition = "TEXT")
 	private List<String> imageUrls;
 
 	@Column(name = "post_like_count")
