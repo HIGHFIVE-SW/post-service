@@ -53,9 +53,10 @@ public class ExpScheduler {
 			return 0;
 		}
 		//공모전 로직
+		//awardOcrResult 가 Boolean TRUE 인 경우만 won=true
 		if (review.getActivityType() == ActivityType.CONTEST) {
 			int state = review.getIsExpGiven();
-			boolean won = review.getAwardOcrResult();
+			boolean won = Boolean.TRUE.equals(review.getAwardOcrResult());
 
 			if (state == 0) {
 				//공모전은 awardOcrResult에 따라 300 / 100점 지급
