@@ -86,8 +86,7 @@ public class Review extends BaseTimeEntity {
 	private Integer likeCount = 0;
 
 	@Column(name = "award_ocr_result")
-	@Builder.Default
-	private Boolean awardOcrResult = false;
+	private Boolean awardOcrResult;
 
 	@Column(name = "ocr_result")
 	@Builder.Default
