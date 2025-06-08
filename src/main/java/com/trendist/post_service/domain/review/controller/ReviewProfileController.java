@@ -94,8 +94,8 @@ public class ReviewProfileController {
 	}
 
 	@Operation(
-		summary = "월별 자신이 진행한 활동 수 조회",
-		description = "월별로 자신이 진행한 활동 수가 몇개인지 통계를 조회합니다."
+		summary = "월별 특정 사용자가 진행한 활동 수 조회",
+		description = "월별로 특정 사용자가 진행한 활동 수가 몇개인지 통계를 조회합니다."
 	)
 	@GetMapping("/{userId}/month/count")
 	public ApiResponse<List<ReviewMonthlyCountResponse>> countUserReviewsByMonth(
