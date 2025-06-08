@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetUserResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewMonthlyCountResponse;
 import com.trendist.post_service.domain.review.service.ReviewProfileService;
 import com.trendist.post_service.global.response.ApiResponse;
 
@@ -81,5 +82,25 @@ public class ReviewProfileController {
 	public ApiResponse<List<ReviewGetKeywordCountResponse>> countUserReviewsByKeyword(
 		@PathVariable(name = "userId") UUID userId) {
 		return ApiResponse.onSuccess(reviewProfileService.countUserReviewsByKeyword(userId));
+	}
+
+	@Operation(
+		summary = "월별 자신이 진행한 활동 수 조회",
+		description = "월별로 자신이 진행한 활동 수가 몇개인지 통계를 조회합니다."
+	)
+	@GetMapping("/mine/month/count")
+	public ApiResponse<List<ReviewMonthlyCountResponse>> countMyReviewsByMonth() {
+		return ApiResponse.onSuccess(reviewProfileService.countMyReviewsByMonth());
+	}
+
+	@Operation(
+		summary = "월별 자신이 진행한 활동 수 조회",
+		description = "월별로 자신이 진행한 활동 수가 몇개인지 통계를 조회합니다."
+	)
+	@GetMapping("/{userId}/month/count")
+	public ApiResponse<List<ReviewMonthlyCountResponse>> countUserReviewsByMonth(
+		@PathVariable(name = "userId") UUID userId
+	) {
+		return ApiResponse.onSuccess(reviewProfileService.countUserReviewsByMonth(userId));
 	}
 }

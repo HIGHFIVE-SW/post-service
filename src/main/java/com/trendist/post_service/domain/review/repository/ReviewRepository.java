@@ -11,11 +11,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.trendist.post_service.domain.review.domain.ActivityType;
 import com.trendist.post_service.domain.review.domain.Keyword;
 import com.trendist.post_service.domain.review.domain.Review;
+import com.trendist.post_service.domain.review.dto.response.ReviewMonthlyCountResponse;
 
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
 	Page<Review> findAllByDeletedFalse(Pageable pageable);
@@ -44,4 +44,17 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 	@Modifying
 	@Query("UPDATE reviews r SET r.likeCount = r.likeCount - 1 WHERE r.id = :reviewId AND r.likeCount > 0")
 	void decrementLikeCount(@Param("reviewId") UUID reviewId);
+
+	@Query("""
+		SELECT new com.trendist.post_service.domain.review.dto.response.ReviewMonthlyCountResponse(
+		  YEAR(r.activityEndDate), MONTH(r.activityEndDate), COUNT(r)
+		)
+		FROM reviews r
+		WHERE r.userId = :userId
+		  AND r.deleted = false
+		GROUP BY YEAR(r.activityEndDate), MONTH(r.activityEndDate)
+		ORDER BY YEAR(r.activityEndDate), MONTH(r.activityEndDate)
+		""")
+	List<ReviewMonthlyCountResponse> countMonthlyByUserIdByEndDate(@Param("userId") UUID userId);
+
 }

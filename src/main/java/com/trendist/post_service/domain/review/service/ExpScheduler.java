@@ -24,7 +24,7 @@ public class ExpScheduler {
 	private final ReviewRepository reviewRepository;
 
 	// 5:30 부터 6시간 간격
-	@Scheduled(cron = "0 30 5/6 * * *")
+	@Scheduled(cron = "0 5/10 * * * *")
 	@Transactional
 	public void assignDailyPoints() {
 		LocalDateTime end = LocalDateTime.now();

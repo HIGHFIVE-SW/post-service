@@ -18,6 +18,7 @@ import com.trendist.post_service.domain.review.domain.Review;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetKeywordCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetTypeCountResponse;
 import com.trendist.post_service.domain.review.dto.response.ReviewGetUserResponse;
+import com.trendist.post_service.domain.review.dto.response.ReviewMonthlyCountResponse;
 import com.trendist.post_service.domain.review.repository.ReviewRepository;
 import com.trendist.post_service.global.feign.user.client.UserServiceClient;
 
@@ -62,6 +63,16 @@ public class ReviewProfileService {
 
 	public List<ReviewGetKeywordCountResponse> countUserReviewsByKeyword(UUID userId) {
 		return countByKeyword(userId);
+	}
+
+	public List<ReviewMonthlyCountResponse> countMyReviewsByMonth() {
+		UUID userId = userServiceClient.getMyProfile("").getResult().id();
+
+		return reviewRepository.countMonthlyByUserIdByEndDate(userId);
+	}
+
+	public List<ReviewMonthlyCountResponse> countUserReviewsByMonth(UUID userId) {
+		return reviewRepository.countMonthlyByUserIdByEndDate(userId);
 	}
 
 	private List<ReviewGetTypeCountResponse> countByType(UUID userId) {
